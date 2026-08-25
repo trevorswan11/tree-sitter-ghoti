@@ -1,0 +1,12 @@
+pub const main := fn(): i32 { // trailing on brace
+    // comment before decl
+    var sum: i32 = 0; // trailing
+    for (0..3) |v| { // comment in for header
+        sum = sum + v;
+    }
+    match (sum) {
+        // comment inside match
+        4 => { sum = sum + 100; },
+        _ => {},
+    }
+};

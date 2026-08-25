@@ -1,0 +1,26 @@
+==================
+Import statement forms
+==================
+
+import foo as A; import "f.gh" as F; const foo := bar;
+pub import "b.gh" as b;
+pub import "io.gh" as io;
+
+---
+
+(source_file
+  (import_statement
+    path: (identifier)
+    alias: (identifier))
+  (import_statement
+    path: (string_literal)
+    alias: (identifier))
+  (decl_statement
+    name: (identifier)
+    value: (identifier))
+  (import_statement
+    path: (string_literal)
+    alias: (identifier))
+  (import_statement
+    path: (string_literal)
+    alias: (identifier)))

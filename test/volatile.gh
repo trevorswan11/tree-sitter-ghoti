@@ -1,0 +1,2 @@
+var v: mut volatile i32 = 42;
+const v: volatile i32 = 42;

@@ -1,0 +1,43 @@
+==================
+Generic auto-parameter method with @this()
+==================
+
+const S := struct {
+    x: i32,
+    const make := fn(v: auto): i32 {
+        const r: @this() = S{ .x = v };
+        return r.x;
+    };
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (struct_expression
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))
+      (decl_statement
+        name: (identifier)
+        value: (function_expression
+          (parameter
+            name: (identifier)
+            type: (primitive_type))
+          return_type: (primitive_type)
+          body: (block
+            (decl_statement
+              name: (identifier)
+              type: (builtin_call_expression
+                function: (builtin_identifier)
+                (arguments))
+              value: (initializer_expression
+                type: (identifier)
+                (field_initializer
+                  name: (identifier)
+                  value: (identifier))))
+            (return_statement
+              (dot_expression
+                object: (identifier)
+                member: (identifier)))))))))

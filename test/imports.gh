@@ -1,0 +1,3 @@
+import foo as A; import "f.gh" as F; const foo := bar;
+pub import "b.gh" as b;
+pub import "io.gh" as io;

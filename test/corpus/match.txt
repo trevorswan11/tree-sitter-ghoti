@@ -1,0 +1,75 @@
+==================
+Tagged union and match expressions
+==================
+
+const U := union { a: i32, b: i32 };
+pub const main := fn(): i32 {
+    var u := U{ .b = 7 };
+    return match (u) { .a => 1, .b => 2, };
+};
+
+var u := U{ .a = 5 };
+match (u) {
+    .a => |&mut v| { v = v + 10; },
+    _ => {},
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (union_expression
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (decl_statement
+          name: (identifier)
+          value: (initializer_expression
+            type: (identifier)
+            (field_initializer
+              name: (identifier)
+              value: (integer_literal))))
+        (return_statement
+          (match_expression
+            matcher: (identifier)
+            (match_arm
+              pattern: (implicit_access_expression
+                member: (identifier))
+              body: (integer_literal))
+            (match_arm
+              pattern: (implicit_access_expression
+                member: (identifier))
+              body: (integer_literal)))))))
+  (decl_statement
+    name: (identifier)
+    value: (initializer_expression
+      type: (identifier)
+      (field_initializer
+        name: (identifier)
+        value: (integer_literal))))
+  (expression_statement
+    (match_expression
+      matcher: (identifier)
+      (match_arm
+        pattern: (implicit_access_expression
+          member: (identifier))
+        capture: (identifier)
+        body: (block
+          (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (binary_expression
+                left: (identifier)
+                right: (integer_literal))))))
+      (match_arm
+        pattern: (underscore)
+        body: (block)))))

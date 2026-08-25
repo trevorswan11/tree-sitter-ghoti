@@ -1,0 +1,11 @@
+const U := union { a: i32, b: i32 };
+pub const main := fn(): i32 {
+    var u := U{ .b = 7 };
+    return match (u) { .a => 1, .b => 2, };
+};
+
+var u := U{ .a = 5 };
+match (u) {
+    .a => |&mut v| { v = v + 10; },
+    _ => {},
+};

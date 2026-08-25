@@ -1,0 +1,21 @@
+==================
+mut/volatile type modifiers
+==================
+
+var v: mut volatile i32 = 42;
+const v: volatile i32 = 42;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    type: (modified_type
+      inner: (modified_type
+        inner: (primitive_type)))
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (modified_type
+      inner: (primitive_type))
+    value: (integer_literal)))
