@@ -6,7 +6,7 @@
 (char_literal) @string
 (integer_literal) @number
 (float_literal) @number
-(boolean_literal) @constant.builtin.boolean
+(boolean_literal) @boolean
 (undefined_literal) @constant.builtin
 (unreachable_literal) @constant.builtin
 (nullptr_literal) @constant.builtin
@@ -36,7 +36,7 @@
 ; Declarations
 (decl_statement name: (identifier) @variable)
 (parameter name: (identifier) @variable.parameter)
-(import_statement alias: (identifier) @module)
+(import_statement alias: (identifier) @type)
 (using_statement alias: (identifier) @type)
 
 ; Types used in position
@@ -85,7 +85,7 @@
 ] @keyword
 
 ; Boolean/logical operators spelled as words
-["and" "or"] @keyword.operator
+["and" "or"] @keyword
 
 ; Operators
 [
