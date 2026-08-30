@@ -1,0 +1,79 @@
+// New builtins are just more `@call(...)` forms.
+const type_name := @typeName(i32);
+const parent := @fieldParentPtr(Node, "link", link_ptr);
+
+// Module-scope `var` globals, including aggregate initializers.
+var request_count: usize = 0uz;
+var anchor: Point = Point{ .x = 40, .y = 2 };
+var grid: [3uz]mut i32 = [3uz]mut i32{7, 8, 9};
+
+// `const`, `var`, and function static members in every structural kind.
+const Counter := struct {
+    n: i32,
+
+    const LIMIT := 100;
+    var live: i32 = 0;
+
+    const init := fn(): @this() { return .{ .n = 0 }; };
+    const tick := fn(^mut self): void {
+        live += 1;                 // bare sibling static member
+        request_count += 1uz;      // module-scope var
+        self.n += 1;
+    };
+};
+
+const Status := enum {
+    ok, not_found, err,
+
+    const DEFAULT_CODE := 200;
+    var seen: i32 = 0;
+
+    const from_code := fn(c: i32): i32 { seen += 1; return c; };
+};
+
+const Slot := union {
+    empty: void,
+    used: i32,
+
+    var allocations: usize = 0uz;
+};
+
+// Unbound method reference: `self` becomes an explicit first parameter.
+const bump_ref := Counter.tick;
+
+// A control-flow statement body needs no trailing `;`.
+const drive := fn(c: ^mut Counter): void {
+    if (c.n < 10) { c.tick(); }
+    for (0..3) |_| { c.tick(); }
+    var g := 0;
+    outer: loop {
+        g += 1;
+        if (g == 5) { break :outer; }
+    }
+};
+
+// Return-position implicit initializers.
+const make_point := fn(hi: bool): Point {
+    return if (hi) .{ .x = 30, .y = 12 }; else .{ .x = 1, .y = 1 };
+};
+
+// A labeled loop used as a value.
+const first_hit := fn(): i32 {
+    var i: i32 = 0;
+    return scan: loop {
+        i += 1;
+        if (i == 3) { break :scan i; }
+    };
+};
+
+// A labeled block used as a value.
+const two := blk: {
+    const a := 1;
+    break :blk a + 1;
+};
+
+pub const main := fn(): i32 {
+    var c := Counter.init();
+    bump_ref(^mut c);
+    return c.n + two + Status.seen + @as(i32, Slot.allocations);
+};

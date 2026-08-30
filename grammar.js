@@ -1,15 +1,3 @@
-// Tree-sitter grammar for the ghoti programming language (https://github.com/trevorswan11/ghoti)
-//
-// Grounded directly in the compiler's own lexer/parser/AST:
-//   lib/compiler/include/compiler/syntax/keywords.hh
-//   lib/compiler/include/compiler/syntax/operators.hh
-//   lib/compiler/include/compiler/syntax/builtins.hh
-//   lib/compiler/include/compiler/ast/statement.hh
-//   lib/compiler/include/compiler/ast/expression.hh
-// This is a highlighting-grade grammar: precedence/nesting is close to the real compiler's, but
-// need not be perfectly semantically faithful -- only good enough to tokenize and structure real
-// ghoti source correctly for editor highlighting/indentation, not to re-implement the compiler.
-
 const PREC = {
   ASSIGN: 1,
   RANGE: 2,
@@ -38,7 +26,9 @@ module.exports = grammar({
     [$._type, $._expression],
     [$._decl_modifier, $.struct_expression],
     [$._type, $.array_expression],
-    [$.labeled_statement, $._expression],
+    [$._expression, $.labeled_expression],
+    [$.labeled_statement, $._expression, $.labeled_expression],
+    [$._expression, $.expression_statement],
     [$.function_type, $.function_expression],
     [$.modified_type, $.pointer_type],
     [$.modified_type, $.reference_type],
@@ -113,14 +103,18 @@ module.exports = grammar({
 
     _statement_body: ($) => $._statement,
 
-    // NOTE: the real compiler tolerates omitting this trailing `;` when the statement's last
-    // branch already self-terminates (a nested `return b;`, or a bare `}` block) -- e.g.
-    // `while (true) {a;} else return b;` needs no second `;`. Modeling that precisely introduced
-    // more structural ambiguity than it was worth for a highlighting-grade grammar; tree-sitter's
-    // own error recovery synthesizes a MISSING `;` in that case, which still produces a fully
-    // correct, complete tree (unlike an ERROR node) -- a documented, benign imperfection, not a
-    // parse failure.
-    expression_statement: ($) => seq($._expression, ";"),
+    expression_statement: ($) =>
+      choice(
+        seq($._expression, ";"),
+        $.if_expression,
+        $.match_expression,
+        $.for_expression,
+        $.while_expression,
+        $.do_while_expression,
+        $.loop_expression,
+        $.labeled_expression,
+        $.block,
+      ),
 
     // ---------------------------------------------------------------- types
 
@@ -223,8 +217,27 @@ module.exports = grammar({
         $.while_expression,
         $.do_while_expression,
         $.loop_expression,
+        $.labeled_expression,
         $.block,
         $.parenthesized_expression,
+      ),
+
+    labeled_expression: ($) =>
+      prec.right(
+        seq(
+          field("label", $.identifier),
+          ":",
+          field(
+            "body",
+            choice(
+              $.block,
+              $.loop_expression,
+              $.for_expression,
+              $.while_expression,
+              $.do_while_expression,
+            ),
+          ),
+        ),
       ),
 
     parenthesized_expression: ($) => seq("(", $._expression, ")"),

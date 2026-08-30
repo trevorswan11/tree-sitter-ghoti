@@ -96,6 +96,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -261,6 +265,10 @@
         },
         {
           "type": "integer_literal",
+          "named": true
+        },
+        {
+          "type": "labeled_expression",
           "named": true
         },
         {
@@ -447,6 +455,10 @@
         },
         {
           "type": "integer_literal",
+          "named": true
+        },
+        {
+          "type": "labeled_expression",
           "named": true
         },
         {
@@ -667,6 +679,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -824,6 +840,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -1035,6 +1055,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -1192,6 +1216,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -1427,6 +1455,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -1654,6 +1686,10 @@
           "named": true
         },
         {
+          "type": "labeled_expression",
+          "named": true
+        },
+        {
           "type": "loop_expression",
           "named": true
         },
@@ -1846,6 +1882,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -2126,6 +2166,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -2338,6 +2382,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -2508,6 +2556,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -2675,6 +2727,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -2934,6 +2990,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -3094,6 +3154,10 @@
           "named": true
         },
         {
+          "type": "labeled_expression",
+          "named": true
+        },
+        {
           "type": "loop_expression",
           "named": true
         },
@@ -3250,6 +3314,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -3491,6 +3559,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -3709,6 +3781,10 @@
         },
         {
           "type": "integer_literal",
+          "named": true
+        },
+        {
+          "type": "labeled_expression",
           "named": true
         },
         {
@@ -4127,6 +4203,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -4379,6 +4459,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -4530,6 +4614,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -4693,6 +4781,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -4764,6 +4856,48 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "labeled_expression",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          },
+          {
+            "type": "do_while_expression",
+            "named": true
+          },
+          {
+            "type": "for_expression",
+            "named": true
+          },
+          {
+            "type": "loop_expression",
+            "named": true
+          },
+          {
+            "type": "while_expression",
+            "named": true
+          }
+        ]
+      },
+      "label": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4871,6 +5005,10 @@
         },
         {
           "type": "integer_literal",
+          "named": true
+        },
+        {
+          "type": "labeled_expression",
           "named": true
         },
         {
@@ -5046,6 +5184,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -5286,6 +5428,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -5533,6 +5679,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -5767,6 +5917,10 @@
           "named": true
         },
         {
+          "type": "labeled_expression",
+          "named": true
+        },
+        {
           "type": "loop_expression",
           "named": true
         },
@@ -5995,6 +6149,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -6146,6 +6304,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -6306,6 +6468,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -6530,6 +6696,10 @@
         },
         {
           "type": "integer_literal",
+          "named": true
+        },
+        {
+          "type": "labeled_expression",
           "named": true
         },
         {
@@ -6799,6 +6969,10 @@
           },
           {
             "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
             "named": true
           },
           {
@@ -7146,6 +7320,10 @@
             "named": true
           },
           {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
             "type": "loop_expression",
             "named": true
           },
@@ -7298,6 +7476,10 @@
         },
         {
           "type": "integer_literal",
+          "named": true
+        },
+        {
+          "type": "labeled_expression",
           "named": true
         },
         {

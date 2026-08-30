@@ -1,0 +1,145 @@
+==================
+Labeled loop / block as a value expression
+==================
+
+const first := fn(): i32 {
+    return scan: loop { break :scan 1; };
+};
+
+const two := blk: {
+    break :blk 2;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (labeled_expression
+            label: (identifier)
+            body: (loop_expression
+              body: (block
+                (break_statement
+                  label: (identifier)
+                  (integer_literal)))))))))
+  (decl_statement
+    name: (identifier)
+    value: (labeled_expression
+      label: (identifier)
+      body: (block
+        (break_statement
+          label: (identifier)
+          (integer_literal))))))
+
+==================
+Control-flow statements need no trailing semicolon
+==================
+
+const f := fn(c: bool): void {
+    if (c) { return; }
+    for (0..3) |_| { g(); }
+    outer: loop { break :outer; }
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (if_expression
+            condition: (identifier)
+            consequence: (expression_statement
+              (block
+                (return_statement)))))
+        (expression_statement
+          (for_expression
+            (range_expression
+              start: (integer_literal)
+              end: (integer_literal))
+            (capture)
+            body: (block
+              (expression_statement
+                (call_expression
+                  function: (identifier)
+                  arguments: (arguments))))))
+        (expression_statement
+          (labeled_expression
+            label: (identifier)
+            body: (loop_expression
+              body: (block
+                (break_statement
+                  label: (identifier))))))))))
+
+==================
+var and const static members of a struct
+==================
+
+const Counter := struct {
+    n: i32,
+    const LIMIT := 100;
+    var live: i32 = 0;
+    const tick := fn(^mut self): void { live += 1; };
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (struct_expression
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type))
+      (decl_statement
+        name: (identifier)
+        value: (integer_literal))
+      (decl_statement
+        name: (identifier)
+        type: (primitive_type)
+        value: (integer_literal))
+      (decl_statement
+        name: (identifier)
+        value: (function_expression
+          (self_parameter)
+          return_type: (primitive_type)
+          body: (block
+            (expression_statement
+              (assignment_expression
+                left: (identifier)
+                right: (integer_literal)))))))))
+
+==================
+Return with an implicit initializer
+==================
+
+const make := fn(): Point {
+    return .{ .x = 1, .y = 2 };
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (identifier)
+      body: (block
+        (return_statement
+          (initializer_expression
+            (field_initializer
+              name: (identifier)
+              value: (integer_literal))
+            (field_initializer
+              name: (identifier)
+              value: (integer_literal))))))))
