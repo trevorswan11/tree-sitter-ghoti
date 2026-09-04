@@ -1,0 +1,706 @@
+==================
+Declaration modifiers: weak, threadlocal, extern/export link-name overrides
+==================
+
+weak var counter: i32 = 0;
+threadlocal var tls_slot: i32 = 0;
+extern("libc", "malloc") const raw_malloc: fn(size: usize): ^u8;
+export("ghoti_entry") const entry := fn(): void {};
+pub weak extern("m") const libm_sin: fn(x: f64): f64;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    (extern_modifier
+      target: (string_literal)
+      link_name: (string_literal))
+    name: (identifier)
+    type: (function_type
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (pointer_type
+        inner: (primitive_type))))
+  (decl_statement
+    (export_modifier
+      link_name: (string_literal))
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block)))
+  (decl_statement
+    (extern_modifier
+      target: (string_literal))
+    name: (identifier)
+    type: (function_type
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type))))
+
+==================
+Interface declaration with required/default methods, associated type and const
+==================
+
+pub const Writer := interface {
+    Error: type;
+    const preferred_chunk: usize = 4096;
+
+    pub const write := fn(&mut self, bytes: []u8): i32;
+
+    pub const writeAll := fn(&mut self, bytes: []u8): i32 {
+        return 0;
+    };
+
+    const debugName := fn(&self): []u8;
+};
+
+const Marker := interface {};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (interface_expression
+      (associated_type
+        name: (identifier))
+      (associated_const
+        name: (identifier)
+        type: (primitive_type)
+        value: (integer_literal))
+      (interface_method
+        name: (identifier)
+        (self_parameter)
+        (parameter
+          name: (identifier)
+          type: (array_type
+            inner: (primitive_type)))
+        return_type: (primitive_type))
+      (interface_method
+        name: (identifier)
+        (self_parameter)
+        (parameter
+          name: (identifier)
+          type: (array_type
+            inner: (primitive_type)))
+        return_type: (primitive_type)
+        body: (block
+          (return_statement
+            (integer_literal))))
+      (interface_method
+        name: (identifier)
+        (self_parameter)
+        return_type: (array_type
+          inner: (primitive_type)))))
+  (decl_statement
+    name: (identifier)
+    value: (interface_expression)))
+
+==================
+Trait impl, inherent impl, and parameterized impl blocks
+==================
+
+impl Writer for File {
+    using Error = os::Error;
+    const preferred_chunk := 8192;
+
+    pub const write := fn(&mut self, bytes: []u8): i32 {
+        return 0;
+    };
+}
+
+impl FdWriter {
+    pub const fromRaw := fn(fd: i32): @this() {
+        return .{ .fd = fd };
+    };
+}
+
+impl(H: type) Writer(H) {
+    pub const fromRaw := fn(raw: H): @this() {
+        return .{ .handle = raw };
+    };
+}
+
+impl(T: type, constexpr n: usize) Debug for Box(T, n) {
+    pub const fmt := fn(&self): i32 {
+        return 0;
+    };
+}
+
+---
+
+(source_file
+  (impl_statement
+    type: (identifier)
+    target: (identifier)
+    body: (impl_body
+      (using_statement
+        alias: (identifier)
+        type: (module_access_expression
+          module: (identifier)
+          member: (identifier)))
+      (decl_statement
+        name: (identifier)
+        value: (integer_literal))
+      (decl_statement
+        name: (identifier)
+        value: (function_expression
+          (self_parameter)
+          (parameter
+            name: (identifier)
+            type: (array_type
+              inner: (primitive_type)))
+          return_type: (primitive_type)
+          body: (block
+            (return_statement
+              (integer_literal)))))))
+  (impl_statement
+    type: (identifier)
+    body: (impl_body
+      (decl_statement
+        name: (identifier)
+        value: (function_expression
+          (parameter
+            name: (identifier)
+            type: (primitive_type))
+          return_type: (builtin_call_expression
+            function: (builtin_identifier)
+            (arguments))
+          body: (block
+            (return_statement
+              (initializer_expression
+                (field_initializer
+                  name: (identifier)
+                  value: (identifier)))))))))
+  (impl_statement
+    (impl_parameters
+      (impl_parameter
+        name: (identifier)
+        type: (primitive_type)))
+    type: (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (identifier)))
+    body: (impl_body
+      (decl_statement
+        name: (identifier)
+        value: (function_expression
+          (parameter
+            name: (identifier)
+            type: (identifier))
+          return_type: (builtin_call_expression
+            function: (builtin_identifier)
+            (arguments))
+          body: (block
+            (return_statement
+              (initializer_expression
+                (field_initializer
+                  name: (identifier)
+                  value: (identifier)))))))))
+  (impl_statement
+    (impl_parameters
+      (impl_parameter
+        name: (identifier)
+        type: (primitive_type))
+      (impl_parameter
+        name: (identifier)
+        type: (primitive_type)))
+    type: (identifier)
+    target: (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (identifier)
+        (identifier)))
+    body: (impl_body
+      (decl_statement
+        name: (identifier)
+        value: (function_expression
+          (self_parameter)
+          return_type: (primitive_type)
+          body: (block
+            (return_statement
+              (integer_literal))))))))
+
+==================
+impl Trait parameter sugar and intersection bounds
+==================
+
+pub const dump := fn(w: &mut impl Writer, msg: []u8): i32 {
+    return 0;
+};
+
+pub const tee := fn(x: &mut impl (Reader + Writer)): i32 {
+    return 0;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (reference_type
+          inner: (impl_type
+            (identifier))))
+      (parameter
+        name: (identifier)
+        type: (array_type
+          inner: (primitive_type)))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (integer_literal)))))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (reference_type
+          inner: (impl_type
+            (identifier)
+            (identifier))))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (integer_literal))))))
+
+==================
+dyn types with associated-type bindings
+==================
+
+var wr: &dyn Writer = undefined;
+var wrp: ^dyn Writer = undefined;
+var wrm: &mut dyn Writer = undefined;
+var it: &dyn Iterator(Item = u8) = undefined;
+var mp: &dyn Map(Key = []u8, Value = i32) = undefined;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    type: (reference_type
+      inner: (dyn_type
+        interface: (identifier)))
+    value: (undefined_literal))
+  (decl_statement
+    name: (identifier)
+    type: (pointer_type
+      inner: (dyn_type
+        interface: (identifier)))
+    value: (undefined_literal))
+  (decl_statement
+    name: (identifier)
+    type: (reference_type
+      inner: (modified_type
+        inner: (dyn_type
+          interface: (identifier))))
+    value: (undefined_literal))
+  (decl_statement
+    name: (identifier)
+    type: (reference_type
+      inner: (dyn_type
+        interface: (identifier)
+        (dyn_assoc_bindings
+          (dyn_assoc_binding
+            name: (identifier)
+            type: (primitive_type)))))
+    value: (undefined_literal))
+  (decl_statement
+    name: (identifier)
+    type: (reference_type
+      inner: (dyn_type
+        interface: (identifier)
+        (dyn_assoc_bindings
+          (dyn_assoc_binding
+            name: (identifier)
+            type: (array_type
+              inner: (primitive_type)))
+          (dyn_assoc_binding
+            name: (identifier)
+            type: (primitive_type)))))
+    value: (undefined_literal)))
+
+==================
+callconv on a bodyless fn value and a defined function
+==================
+
+const winfn := fn(x: i32) callconv(.win64): i32;
+const sysv_add := fn(a: i32, b: i32) callconv(.sysv): i32 {
+    return a + b;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (callconv
+        convention: (calling_convention))
+      return_type: (primitive_type)))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (callconv
+        convention: (calling_convention))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+==================
+Open-ended ranges
+==================
+
+const full_slice := arr[..];
+const upto := arr[..arr.len];
+const upto_incl := arr[..=arr.len];
+const from_lower := arr[lower..];
+const both := arr[lower..upper];
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (index_expression
+      array: (identifier)
+      index: (range_expression)))
+  (decl_statement
+    name: (identifier)
+    value: (index_expression
+      array: (identifier)
+      index: (range_expression
+        end: (dot_expression
+          object: (identifier)
+          member: (identifier)))))
+  (decl_statement
+    name: (identifier)
+    value: (index_expression
+      array: (identifier)
+      index: (range_expression
+        end: (dot_expression
+          object: (identifier)
+          member: (identifier)))))
+  (decl_statement
+    name: (identifier)
+    value: (index_expression
+      array: (identifier)
+      index: (range_expression
+        start: (identifier))))
+  (decl_statement
+    name: (identifier)
+    value: (index_expression
+      array: (identifier)
+      index: (range_expression
+        start: (identifier)
+        end: (identifier)))))
+
+==================
+Arbitrary-width integers and half/quad/f80 floats
+==================
+
+var narrow: u3 = 0;
+var wide: i3343 = 0;
+var half: f16 = 0.0;
+var quad: f128 = 0.0;
+var extended: f80 = 0.0;
+var ci: constexpr_int = 0;
+var cf: constexpr_float = 0.0;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (float_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (float_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (float_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (float_literal)))
+
+==================
+match constexpr
+==================
+
+const pick := fn(T: type): i32 {
+    return match constexpr (T) {
+        i32 => 1,
+        _ => 0,
+    };
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (match_expression
+            matcher: (identifier)
+            (match_arm
+              pattern: (identifier)
+              body: (integer_literal))
+            (match_arm
+              pattern: (underscore)
+              body: (integer_literal))))))))
+
+==================
+Postfix unwrap operators
+==================
+
+const maybe_ok := fn(): i32 {
+    const v := try_thing()?;
+    const w := try_thing()!;
+    return v + w;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (decl_statement
+          name: (identifier)
+          value: (unwrap_expression
+            operand: (call_expression
+              function: (identifier)
+              arguments: (arguments))))
+        (decl_statement
+          name: (identifier)
+          value: (unwrap_expression
+            operand: (call_expression
+              function: (identifier)
+              arguments: (arguments))))
+        (return_statement
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+==================
+Inline assembly expression
+==================
+
+const syscall_write := fn(fd: i32, buf: ^u8, len: usize): i32 {
+    return asm i32 {
+        template: "syscall",
+        outputs: ("={rax}" = _),
+        inputs: ("{rdi}" = fd, "{rsi}" = buf, "{rdx}" = len),
+        clobbers: ("rcx", "r11"),
+        options: (volatile),
+    };
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        type: (pointer_type
+          inner: (primitive_type)))
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (asm_expression
+            result_type: (primitive_type)
+            (asm_clause
+              template: (string_literal))
+            (asm_clause
+              outputs: (asm_operand_list
+                (asm_operand
+                  constraint: (string_literal)
+                  value: (underscore))))
+            (asm_clause
+              inputs: (asm_operand_list
+                (asm_operand
+                  constraint: (string_literal)
+                  value: (identifier))
+                (asm_operand
+                  constraint: (string_literal)
+                  value: (identifier))
+                (asm_operand
+                  constraint: (string_literal)
+                  value: (identifier))))
+            (asm_clause
+              clobber: (string_literal)
+              clobber: (string_literal))
+            (asm_clause
+              option: (asm_option))))))))
+
+==================
+Positional aggregate literals
+==================
+
+const p := Point{ 1, 2 };
+const q := .{ 3, 4 };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (initializer_expression
+      type: (identifier)
+      (integer_literal)
+      (integer_literal)))
+  (decl_statement
+    name: (identifier)
+    value: (initializer_expression
+      (integer_literal)
+      (integer_literal))))
+
+==================
+@cfg gating struct fields and members
+==================
+
+struct {
+    @cfg(target_os == "linux") a: i32 else b: i32,
+
+    @cfg(target_os == "linux") {
+        const linux_only := fn(): void {};
+    } else {
+        const fallback_only := fn(): void {};
+    }
+};
+
+---
+
+(source_file
+  (expression_statement
+    (struct_expression
+      (field_cfg_group
+        (cfg_predicate
+          predicate: (binary_expression
+            left: (identifier)
+            right: (string_literal)))
+        consequence: (field_declaration
+          name: (identifier)
+          type: (primitive_type))
+        alternate: (field_declaration
+          name: (identifier)
+          type: (primitive_type)))
+      (member_cfg_group
+        (cfg_predicate
+          predicate: (binary_expression
+            left: (identifier)
+            right: (string_literal)))
+        consequence: (decl_statement
+          name: (identifier)
+          value: (function_expression
+            return_type: (primitive_type)
+            body: (block)))
+        alternate: (decl_statement
+          name: (identifier)
+          value: (function_expression
+            return_type: (primitive_type)
+            body: (block)))))))
+
+==================
+@cfg statement with else-if chain
+==================
+
+const cfg_stmt_example := fn(): void {
+    @cfg(debug) {
+        var x: i32 = 1;
+    } else @cfg(release) {
+        var x: i32 = 2;
+    } else {
+        var x: i32 = 3;
+    }
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (cfg_statement
+          (cfg_predicate
+            predicate: (identifier))
+          consequence: (expression_statement
+            (block
+              (decl_statement
+                name: (identifier)
+                type: (primitive_type)
+                value: (integer_literal))))
+          alternate: (cfg_statement
+            (cfg_predicate
+              predicate: (identifier))
+            consequence: (expression_statement
+              (block
+                (decl_statement
+                  name: (identifier)
+                  type: (primitive_type)
+                  value: (integer_literal))))
+            alternate: (expression_statement
+              (block
+                (decl_statement
+                  name: (identifier)
+                  type: (primitive_type)
+                  value: (integer_literal))))))))))

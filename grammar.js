@@ -24,14 +24,20 @@ module.exports = grammar({
 
   conflicts: ($) => [
     [$._type, $._expression],
-    [$._decl_modifier, $.struct_expression],
+    [$.extern_modifier, $.struct_expression],
     [$._type, $.array_expression],
     [$._expression, $.labeled_expression],
     [$.labeled_statement, $._expression, $.labeled_expression],
     [$._expression, $.expression_statement],
-    [$.function_type, $.function_expression],
     [$.modified_type, $.pointer_type],
     [$.modified_type, $.reference_type],
+    [$.block, $.asm_expression],
+    [$.function_type, $._fn_header],
+    [$._field_cfg_body, $._member_cfg_body],
+    [$._enumerator_cfg_body, $._member_cfg_body],
+    [$.cfg_statement],
+    [$.function_expression],
+    [$.dyn_type],
   ],
 
   rules: {
@@ -51,6 +57,8 @@ module.exports = grammar({
         $.continue_statement,
         $.return_statement,
         $.test_statement,
+        $.impl_statement,
+        $.cfg_statement,
         $.labeled_statement,
         $.expression_statement,
       ),
@@ -60,7 +68,42 @@ module.exports = grammar({
     labeled_statement: ($) =>
       seq(field("label", $.identifier), ":", choice($.block, $._expression), ";"),
 
-    _decl_modifier: (_) => choice("pub", "extern", "export"),
+    // `@cfg(pred) <body> [else @cfg(pred) <body>]* [else <body>]?`, usable anywhere a
+    // statement can appear.
+    cfg_predicate: ($) => seq("@cfg", "(", field("predicate", $._expression), ")"),
+
+    _cfg_body: ($) => $._statement,
+
+    cfg_statement: ($) =>
+      prec.right(
+        seq(
+          $.cfg_predicate,
+          field("consequence", $._cfg_body),
+          repeat(seq("else", $.cfg_predicate, field("consequence", $._cfg_body))),
+          optional(seq("else", field("alternate", $._cfg_body))),
+        ),
+      ),
+
+    _decl_modifier: ($) =>
+      choice("pub", $.extern_modifier, $.export_modifier, "threadlocal", "weak"),
+
+    // `extern` / `extern("lib")` / `extern("lib", "sym")`
+    extern_modifier: ($) =>
+      seq(
+        "extern",
+        optional(
+          seq(
+            "(",
+            field("target", $.string_literal),
+            optional(seq(",", field("link_name", $.string_literal))),
+            ")",
+          ),
+        ),
+      ),
+
+    // `export` / `export("sym")`
+    export_modifier: ($) =>
+      seq("export", optional(seq("(", field("link_name", $.string_literal), ")"))),
 
     decl_statement: ($) =>
       seq(
@@ -101,6 +144,24 @@ module.exports = grammar({
     test_statement: ($) =>
       seq("test", optional(field("description", $.string_literal)), field("body", $.block)),
 
+    // `impl I for T { ... }` / `impl T { ... }` / `impl(P: type, ...) [I for] T { ... }`
+    // A pure statement, no trailing `;`, like `test { ... }`.
+    impl_statement: ($) =>
+      seq(
+        "impl",
+        optional($.impl_parameters),
+        field("type", $._type),
+        optional(seq("for", field("target", $._type))),
+        field("body", $.impl_body),
+      ),
+
+    impl_parameters: ($) => seq("(", sepBy(",", $.impl_parameter), optional(","), ")"),
+
+    impl_parameter: ($) =>
+      seq(optional("constexpr"), field("name", $.identifier), ":", field("type", $._type)),
+
+    impl_body: ($) => seq("{", repeat($._member), "}"),
+
     _statement_body: ($) => $._statement,
 
     expression_statement: ($) =>
@@ -124,6 +185,8 @@ module.exports = grammar({
         $.reference_type,
         $.array_type, // also covers slice types `[]T` (empty size)
         $.function_type,
+        $.dyn_type,
+        $.impl_type,
         $.primitive_type,
         $.identifier,
         $.module_access_expression,
@@ -131,6 +194,7 @@ module.exports = grammar({
         $.struct_expression,
         $.union_expression,
         $.enum_expression,
+        $.interface_expression,
         $.builtin_call_expression, // e.g. @this()
         $.modified_type, // bare `mut`/`volatile` prefix, e.g. `var v: mut volatile i32;`
       ),
@@ -149,27 +213,55 @@ module.exports = grammar({
         field("inner", $._type),
       ),
 
+    // `dyn I` / `dyn I(Assoc = T, ...)`; wrapped as `&dyn I` / `^dyn I` via reference/pointer
+    // types since `dyn` sits where a type normally would.
+    dyn_type: ($) =>
+      seq(
+        "dyn",
+        field("interface", $.identifier),
+        repeat(seq("::", field("interface", $.identifier))),
+        optional($.dyn_assoc_bindings),
+      ),
+
+    dyn_assoc_bindings: ($) => seq("(", sepBy(",", $.dyn_assoc_binding), optional(","), ")"),
+
+    dyn_assoc_binding: ($) => seq(field("name", $.identifier), "=", field("type", $._type)),
+
+    // `impl I` / `impl (A + B)` parameter-position sugar.
+    impl_type: ($) =>
+      seq("impl", choice($._type, seq("(", sepByPlus($._type), ")"))),
+
+    // Optional `callconv(.name)` between a function header's `)` and its return type.
+    callconv: ($) => seq("callconv", "(", field("convention", $.calling_convention), ")"),
+
+    calling_convention: (_) =>
+      seq(".", choice("c", "sysv", "win64", "stdcall", "fastcall", "aapcs")),
+
+    // Every non-variadic parameter must be named (`fn(x: i32, done: ^bool): void`), not bare
+    // types; the return type is mandatory.
     function_type: ($) =>
       seq(
         "fn",
         "(",
-        sepBy(",", choice($._type, "...")),
+        sepBy(",", choice($.parameter, "...")),
         optional(","),
         ")",
-        optional(seq(":", field("return_type", $._type))),
+        ":",
+        field("return_type", $._type),
       ),
 
-    primitive_type: (_) =>
+    primitive_type: ($) =>
       choice(
-        "i32",
-        "i64",
+        $._sized_integer_type,
         "isize",
-        "u32",
-        "u64",
         "usize",
+        "f16",
         "f32",
         "f64",
-        "u8",
+        "f80",
+        "f128",
+        "constexpr_int",
+        "constexpr_float",
         "bool",
         "void",
         "type",
@@ -177,6 +269,9 @@ module.exports = grammar({
         "opaque",
         "noreturn",
       ),
+
+    // Arbitrary-width integers: `u123`, `i3343`, etc. (width 1..65535, no leading zero).
+    _sized_integer_type: (_) => token(prec(2, /[iu][1-9][0-9]*/)),
 
     // ---------------------------------------------------------------- expressions
 
@@ -207,10 +302,13 @@ module.exports = grammar({
         $.binary_expression,
         $.assignment_expression,
         $.range_expression,
+        $.unwrap_expression,
         $.function_expression,
         $.struct_expression,
         $.union_expression,
         $.enum_expression,
+        $.interface_expression,
+        $.asm_expression,
         $.if_expression,
         $.match_expression,
         $.for_expression,
@@ -248,17 +346,38 @@ module.exports = grammar({
     unreachable_literal: (_) => "unreachable",
     nullptr_literal: (_) => "nullptr",
 
+    // Lexeme shape mirrors lexer.cc's read_number(): digits (with optional 0x/0b/0o prefix),
+    // optional `.` fraction, optional exponent, optional suffix. A suffix is triggered by one of
+    // `uUiIzZlLfF` and then greedily consumes `[A-Za-z0-9]*`; widths are now arbitrary
+    // (`u123`, `i3343`, `uz`) rather than the old fixed `u`/`l`/`ul` set (though `l`/`L` lexes as
+    // a (now-rejected) suffix shape too, since the lexer doesn't validate it). A suffix starting
+    // `f`/`F` -- or a `.` fraction, or an exponent -- makes the literal a float instead.
     integer_literal: (_) =>
       token(
         choice(
-          /0[xX][0-9a-fA-F_]+[uU]?[zZlL]?/,
-          /0[bB][01_]+[uU]?[zZlL]?/,
-          /0[oO][0-7_]+[uU]?[zZlL]?/,
-          /[0-9][0-9_]*[uU]?[zZlL]?/,
+          seq(/0[xX][0-9a-fA-F_]+/, optional(seq(/[uUiIzZlL]/, /[A-Za-z0-9]*/))),
+          seq(/0[bB][01_]+/, optional(seq(/[uUiIzZlL]/, /[A-Za-z0-9]*/))),
+          seq(/0[oO][0-7_]+/, optional(seq(/[uUiIzZlL]/, /[A-Za-z0-9]*/))),
+          seq(/[0-9][0-9_]*/, optional(seq(/[uUiIzZlL]/, /[A-Za-z0-9]*/))),
         ),
       ),
 
-    float_literal: (_) => token(seq(/[0-9][0-9_]*/, ".", /[0-9][0-9_]*/, optional(/[fF]/))),
+    // Float suffix is `f`/`F` + width digits (`f32`, `f64`, `f16`, `f128`, `f80`); a bare
+    // `f`-suffixed integer (no `.`) is also a float, as is an exponent with no `.`.
+    float_literal: (_) =>
+      token(
+        choice(
+          seq(
+            /[0-9][0-9_]*/,
+            ".",
+            /[0-9][0-9_]*/,
+            optional(/[eE][+-]?[0-9]+/),
+            optional(seq(/[uUiIzZlLfF]/, /[A-Za-z0-9]*/)),
+          ),
+          seq(/[0-9][0-9_]*/, /[eE][+-]?[0-9]+/, optional(seq(/[uUiIzZlLfF]/, /[A-Za-z0-9]*/))),
+          seq(/[0-9][0-9_]*/, seq(/[fF]/, /[A-Za-z0-9]*/)),
+        ),
+      ),
 
     string_literal: (_) => token(seq('"', repeat(choice(/[^"\\]/, /\\./)), '"')),
 
@@ -292,12 +411,17 @@ module.exports = grammar({
       choice(
         // Anonymous `.{ .a = 1 }` -- the leading `.` has no member, must not be confused with
         // implicit_access_expression's own `.member` shorthand
-        seq(".", "{", sepBy(",", $.field_initializer), optional(","), "}"),
-        seq(field("type", $._expression), "{", sepBy(",", $.field_initializer), optional(","), "}"),
+        seq(".", "{", sepBy(",", $._initializer_item), optional(","), "}"),
+        seq(field("type", $._expression), "{", sepBy(",", $._initializer_item), optional(","), "}"),
       ),
 
+    // Named `.field = value` or positional `value` (array-style / `Alias{ a, b, c }`) entry.
+    _initializer_item: ($) => choice($.field_initializer, $._expression),
+
+    // Precedence above PREC.FIELD so `.name =` shifts into a field initializer instead of
+    // reducing `.name` as a standalone implicit_access_expression first.
     field_initializer: ($) =>
-      seq(".", field("name", $.identifier), "=", field("value", $._expression)),
+      prec(PREC.FIELD + 1, seq(".", field("name", $.identifier), "=", field("value", $._expression))),
 
     array_expression: ($) =>
       seq(field("array_type", $.array_type), "{", sepBy(",", $._expression), optional(","), "}"),
@@ -310,6 +434,10 @@ module.exports = grammar({
       prec(PREC.UNARY, seq("&", optional("mut"), field("operand", $._expression))),
     address_of_expression: ($) =>
       prec(PREC.UNARY, seq("^", optional("mut"), field("operand", $._expression))),
+
+    // Postfix `?` / `!` unwrap operators for `Result` / `Optional`.
+    unwrap_expression: ($) =>
+      prec.left(PREC.CALL, seq(field("operand", $._expression), field("operator", choice("?", "!")))),
 
     binary_expression: ($) => {
       const table = [
@@ -346,10 +474,18 @@ module.exports = grammar({
         ),
       ),
 
+    // All four combinations of optional start/end: `..`, `..hi`, `..=hi`, `lo..`, `lo..=hi`.
     range_expression: ($) =>
       prec.left(
         PREC.RANGE,
-        seq(field("start", $._expression), choice("..", "..="), field("end", $._expression)),
+        choice(
+          seq(
+            field("start", $._expression),
+            field("operator", choice("..", "..=")),
+            optional(field("end", $._expression)),
+          ),
+          seq(field("operator", choice("..", "..=")), optional(field("end", $._expression))),
+        ),
       ),
 
     // -------------------------------------------------------------- functions
@@ -360,23 +496,42 @@ module.exports = grammar({
     parameter: ($) =>
       seq(field("name", $.identifier), ":", field("type", $._type)),
 
-    function_expression: ($) =>
+    // Shared header: `(self?, params..., ...?) callconv(.x)? : return_type?`
+    _fn_header: ($) =>
       seq(
-        optional("move"),
-        "fn",
         "(",
         optional(seq($.self_parameter, optional(","))),
         sepBy(",", $.parameter),
         optional(seq(optional(","), "...")),
         optional(","),
         ")",
-        optional(seq(":", field("return_type", $._type))),
-        field("body", $.block),
+        optional($.callconv),
+        ":",
+        field("return_type", $._type),
+      ),
+
+    // A bodyless `fn(...): T` is a function-typed value (e.g. usable as a `T: type` argument,
+    // an interface method's signature, or a plain function-pointer-typed const). Prefer
+    // consuming a trailing `{ ... }` as the body whenever one is present.
+    function_expression: ($) =>
+      choice(
+        seq(optional(choice("move", "naked")), "fn", $._fn_header, field("body", $.block)),
+        prec.dynamic(-1, seq(optional(choice("move", "naked")), "fn", $._fn_header)),
       ),
 
     // -------------------------------------------------------------- struct/union/enum
 
     _member: ($) => choice($.decl_statement, $.import_statement, $.using_statement),
+
+    // `@cfg(pred) <one member or { member* }> [else @cfg(...) ...]* [else ...]?`
+    member_cfg_group: ($) =>
+      seq(
+        $.cfg_predicate,
+        field("consequence", $._member_cfg_body),
+        repeat(seq("else", $.cfg_predicate, field("consequence", $._member_cfg_body))),
+        optional(seq("else", field("alternate", $._member_cfg_body))),
+      ),
+    _member_cfg_body: ($) => choice($._member, seq("{", repeat($._member), "}")),
 
     field_declaration: ($) =>
       seq(
@@ -387,7 +542,28 @@ module.exports = grammar({
         optional(seq("=", field("default", $._expression))),
       ),
 
-    _struct_body: ($) => seq("{", sepBy(",", $.field_declaration), optional(","), repeat($._member), "}"),
+    // `@cfg(pred) <one field or { field, ... }> [else @cfg(...) ...]* [else ...]?`
+    field_cfg_group: ($) =>
+      seq(
+        $.cfg_predicate,
+        field("consequence", $._field_cfg_body),
+        repeat(seq("else", $.cfg_predicate, field("consequence", $._field_cfg_body))),
+        optional(seq("else", field("alternate", $._field_cfg_body))),
+      ),
+    _field_cfg_body: ($) =>
+      choice(
+        $.field_declaration,
+        seq("{", sepBy(",", $.field_declaration), optional(","), "}"),
+      ),
+
+    _struct_body: ($) =>
+      seq(
+        "{",
+        sepBy(",", choice($.field_declaration, $.field_cfg_group)),
+        optional(","),
+        repeat(choice($._member, $.member_cfg_group)),
+        "}",
+      ),
 
     struct_expression: ($) =>
       seq(repeat(choice("extern", "packed")), "struct", $._struct_body),
@@ -396,16 +572,97 @@ module.exports = grammar({
 
     enumerator: ($) => seq(field("name", $.identifier), optional(seq("=", field("value", $._expression)))),
 
+    // `@cfg(pred) <one enumerator/_ or { ..., ... }> [else @cfg(...) ...]* [else ...]?`
+    enumerator_cfg_group: ($) =>
+      seq(
+        $.cfg_predicate,
+        field("consequence", $._enumerator_cfg_body),
+        repeat(seq("else", $.cfg_predicate, field("consequence", $._enumerator_cfg_body))),
+        optional(seq("else", field("alternate", $._enumerator_cfg_body))),
+      ),
+    _enumerator_cfg_body: ($) =>
+      choice(
+        $.enumerator,
+        seq("{", sepBy(",", choice($.enumerator, "_")), optional(","), "}"),
+      ),
+
     enum_expression: ($) =>
       seq(
         "enum",
         optional(seq(":", field("underlying", $._type))),
         "{",
-        sepBy(",", choice($.enumerator, "_")),
+        sepBy(",", choice($.enumerator, "_", $.enumerator_cfg_group)),
         optional(","),
-        repeat($._member),
+        repeat(choice($._member, $.member_cfg_group)),
         "}",
       ),
+
+    // -------------------------------------------------------------- interfaces
+
+    // `const W := interface { ... }`: required methods, default methods, associated types,
+    // and associated consts.
+    interface_expression: ($) => seq("interface", "{", repeat($._interface_member), "}"),
+
+    _interface_member: ($) =>
+      choice($.interface_method, $.associated_type, $.associated_const),
+
+    // Bodyless (`;`) is a required method; with a body it's a default method.
+    // Bodyless is a required method; with a body it's a default method -- either way the member
+    // ends with a mandatory `;`, same as any other decl-shaped interface member.
+    interface_method: ($) =>
+      seq(
+        optional("pub"),
+        "const",
+        field("name", $.identifier),
+        ":=",
+        "fn",
+        $._fn_header,
+        optional(field("body", $.block)),
+        ";",
+      ),
+
+    // `Name: type;` (required) or `Name: type = Default;` (defaulted)
+    associated_type: ($) =>
+      seq(field("name", $.identifier), ":", "type", optional(seq("=", field("default", $._type))), ";"),
+
+    // `const N: T;` (required) or `const N: T = expr;` (defaulted)
+    associated_const: ($) =>
+      seq(
+        "const",
+        field("name", $.identifier),
+        ":",
+        field("type", $._type),
+        optional(seq("=", field("value", $._expression))),
+        ";",
+      ),
+
+    // -------------------------------------------------------------- inline assembly
+
+    asm_expression: ($) =>
+      seq("asm", optional(field("result_type", $._type)), "{", sepBy(",", $.asm_clause), optional(","), "}"),
+
+    asm_clause: ($) =>
+      choice(
+        seq("template", ":", field("template", $.string_literal)),
+        seq("outputs", ":", field("outputs", $.asm_operand_list)),
+        seq("inputs", ":", field("inputs", $.asm_operand_list)),
+        seq(
+          "clobbers",
+          ":",
+          "(",
+          sepBy(",", field("clobber", $.string_literal)),
+          optional(","),
+          ")",
+        ),
+        seq("options", ":", "(", sepBy(",", field("option", $.asm_option)), optional(","), ")"),
+      ),
+
+    asm_operand_list: ($) => seq("(", sepBy(",", $.asm_operand), optional(","), ")"),
+
+    asm_operand: ($) =>
+      seq(field("constraint", $.string_literal), "=", field("value", $._expression)),
+
+    asm_option: (_) => choice("volatile", "noreturn", "intel", "att", "align_stack"),
 
     // -------------------------------------------------------------- control flow
 
@@ -441,11 +698,12 @@ module.exports = grammar({
         $.dereference_expression,
         $.reference_expression,
         $.address_of_expression,
+        $.range_expression,
       ),
 
     match_arm: ($) =>
       seq(
-        field("pattern", $._pattern),
+        field("pattern", sepBy1(",", $._pattern)),
         "=>",
         optional(
           seq(
@@ -459,7 +717,17 @@ module.exports = grammar({
       ),
 
     match_expression: ($) =>
-      seq("match", "(", field("matcher", $._expression), ")", "{", sepBy(",", $.match_arm), optional(","), "}"),
+      seq(
+        "match",
+        optional("constexpr"),
+        "(",
+        field("matcher", $._expression),
+        ")",
+        "{",
+        sepBy(",", $.match_arm),
+        optional(","),
+        "}",
+      ),
 
     capture: ($) =>
       seq(optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))), choice($.identifier, "_")),
@@ -500,4 +768,12 @@ module.exports = grammar({
 
 function sepBy(sep, rule) {
   return optional(seq(rule, repeat(seq(sep, rule))));
+}
+
+function sepBy1(sep, rule) {
+  return seq(rule, repeat(seq(sep, rule)));
+}
+
+function sepByPlus(rule) {
+  return seq(rule, repeat(seq("+", rule)));
 }

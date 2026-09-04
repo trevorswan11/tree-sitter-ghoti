@@ -1,0 +1,146 @@
+// Declaration modifiers: weak, threadlocal, extern/export link-name overrides
+weak var counter: i32 = 0;
+threadlocal var tls_slot: i32 = 0;
+extern("libc", "malloc") const raw_malloc: fn(size: usize): ^u8;
+export("ghoti_entry") const entry := fn(): void {};
+pub weak extern("m") const libm_sin: fn(x: f64): f64;
+
+// Interfaces
+pub const Writer := interface {
+    Error: type;
+    const preferred_chunk: usize = 4096;
+
+    pub const write := fn(&mut self, bytes: []u8): i32;
+    pub const flush := fn(&mut self): i32;
+
+    pub const writeAll := fn(&mut self, bytes: []u8): i32 {
+        var off: usize = 0;
+        return off;
+    };
+
+    const debugName := fn(&self): []u8;
+};
+
+const Marker := interface {};
+
+// impl blocks
+impl Writer for File {
+    using Error = os::Error;
+    const preferred_chunk := 8192;
+
+    pub const write := fn(&mut self, bytes: []u8): i32 {
+        return 0;
+    };
+    pub const flush := fn(&mut self): i32 {
+        return 0;
+    };
+    const debugName := fn(&self): []u8 { return "File"; };
+}
+
+impl FdWriter {
+    pub const fromRaw := fn(fd: i32): @this() {
+        return .{ .fd = fd };
+    };
+    pub const default_mode := 0o644;
+}
+
+impl(H: type) Writer(H) {
+    pub const fromRaw := fn(raw: H): @this() {
+        return .{ .handle = raw };
+    };
+}
+
+impl(T: type) Debug for Box(T) {
+    pub const fmt := fn(&self, w: &mut dyn Writer): i32 {
+        return 0;
+    };
+}
+
+// impl I parameter sugar and intersection bounds
+pub const dump := fn(w: &mut impl Writer, msg: []u8): i32 {
+    return 0;
+};
+
+pub const tee := fn(x: &mut impl (Reader + Writer)): i32 {
+    return 0;
+};
+
+// dyn types
+var wr: &dyn Writer = undefined;
+var wrp: ^dyn Writer = undefined;
+var wrm: &mut dyn Writer = undefined;
+var it: &dyn Iterator(Item = u8) = undefined;
+var mp: &dyn Map(Key = []u8, Value = i32) = undefined;
+
+// callconv
+const winfn := fn(x: i32) callconv(.win64): i32;
+const sysv_add := fn(a: i32, b: i32) callconv(.sysv): i32 {
+    return a + b;
+};
+
+// Open-ended ranges
+const full_slice := arr[..];
+const upto := arr[..arr.len];
+const upto_incl := arr[..=arr.len];
+const from_lower := arr[lower..];
+const both := arr[lower..upper];
+
+// Arbitrary-width integers and floats
+var narrow: u3 = 0;
+var wide: i3343 = 0;
+var half: f16 = 0.0;
+var quad: f128 = 0.0;
+var extended: f80 = 0.0;
+var ci: constexpr_int = 0;
+var cf: constexpr_float = 0.0;
+
+// match constexpr
+const pick := fn(T: type): i32 {
+    return match constexpr (T) {
+        i32 => 1,
+        _ => 0,
+    };
+};
+
+// Postfix unwrap operators
+const maybe_ok := fn(): i32 {
+    const v := try_thing()?;
+    const w := try_thing()!;
+    return v + w;
+};
+
+// Inline assembly
+const syscall_write := fn(fd: i32, buf: ^u8, len: usize): i32 {
+    return asm i32 {
+        template: "syscall",
+        outputs: ("={rax}" = _),
+        inputs: ("{rdi}" = fd, "{rsi}" = buf, "{rdx}" = len),
+        clobbers: ("rcx", "r11"),
+        options: (volatile),
+    };
+};
+
+// Positional aggregate literals
+const p := Point{ 1, 2 };
+const q := .{ 3, 4 };
+
+// @cfg gating members / statements
+struct {
+    @cfg(target_os == "linux") a: i32 else b: i32,
+
+    @cfg(target_os == "linux") {
+        const linux_only := fn(): void {};
+    } else {
+        const fallback_only := fn(): void {};
+    }
+};
+
+const cfg_stmt_example := fn(): void {
+    @cfg(debug) {
+        var x: i32 = 1;
+    } else @cfg(release) {
+        var x: i32 = 2;
+    } else {
+        var x: i32 = 3;
+    }
+};
