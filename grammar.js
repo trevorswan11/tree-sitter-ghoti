@@ -447,9 +447,9 @@ module.exports = grammar({
         [PREC.BW_OR, "|"],
         [PREC.BW_XOR, "^"],
         [PREC.BW_AND, "&"],
-        [PREC.SHIFT, choice("<<", ">>")],
-        [PREC.ADD, choice("+", "-")],
-        [PREC.MUL, choice("*", "/", "%")],
+        [PREC.SHIFT, choice("<<", ">>", "<<%")],
+        [PREC.ADD, choice("+", "-", "+%", "-%")],
+        [PREC.MUL, choice("*", "/", "%", "*%")],
       ];
       return choice(
         ...table.map(([precedence, operator]) =>
@@ -468,7 +468,24 @@ module.exports = grammar({
           field("left", $._expression),
           field(
             "operator",
-            choice("=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=", "~="),
+            choice(
+              "=",
+              "+=",
+              "+%=",
+              "-=",
+              "-%=",
+              "*=",
+              "*%=",
+              "/=",
+              "%=",
+              "&=",
+              "|=",
+              "^=",
+              "<<=",
+              "<<%=",
+              ">>=",
+              "~=",
+            ),
           ),
           field("right", $._expression),
         ),

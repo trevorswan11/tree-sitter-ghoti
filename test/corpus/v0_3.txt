@@ -704,3 +704,67 @@ const cfg_stmt_example := fn(): void {
                   name: (identifier)
                   type: (primitive_type)
                   value: (integer_literal))))))))))
+
+==================
+Wrapping arithmetic and shift operators
+==================
+
+const a := x +% y;
+const b := x -% y;
+const c := x *% y;
+const d := x <<% y;
+
+const wrap := fn(n: i32): void {
+  n +%= 1;
+  n -%= 1;
+  n *%= 2;
+  n <<%= 1;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (decl_statement
+    name: (identifier)
+    value: (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (decl_statement
+    name: (identifier)
+    value: (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (decl_statement
+    name: (identifier)
+    value: (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (integer_literal)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (integer_literal)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (integer_literal)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (integer_literal)))))))
