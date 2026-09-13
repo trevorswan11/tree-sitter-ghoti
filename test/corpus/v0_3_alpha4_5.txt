@@ -1,0 +1,282 @@
+==================
+Doc comments and module doc comments are distinguished from plain comments
+==================
+
+//! Module doc comment.
+
+/// Doc comment on a declaration.
+const answer: i32 = 42;
+
+// A plain comment.
+
+---
+
+(source_file
+  (module_doc_comment)
+  (doc_comment)
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (comment))
+
+==================
+Raw identifiers let reserved words and arbitrary text act as names
+==================
+
+const @"var": i32 = 1;
+const @"weird name": i32 = 2;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal)))
+
+==================
+errdefer statements with and without a capture
+==================
+
+const open_two := fn(): i32 {
+    errdefer cleanup();
+    errdefer |err| logErr(err);
+    errdefer |^err| logErr(err);
+    errdefer |&err| logErr(err);
+    errdefer |_| cleanup();
+    return 0;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (errdefer_statement
+          body: (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments))))
+        (errdefer_statement
+          capture: (identifier)
+          body: (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (identifier)))))
+        (errdefer_statement
+          capture: (identifier)
+          body: (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (identifier)))))
+        (errdefer_statement
+          capture: (identifier)
+          body: (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (identifier)))))
+        (errdefer_statement
+          body: (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments))))
+        (return_statement
+          (integer_literal))))))
+
+==================
+constexpr var, in either keyword order
+==================
+
+constexpr var counter: i32 = 0;
+var constexpr other: i32 = 0;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal)))
+
+==================
+for constexpr and while constexpr
+==================
+
+const unroll := fn(): void {
+    for constexpr (0..4) |i| {
+        const x := i;
+    }
+    while constexpr (true) {
+        break;
+    }
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (for_expression
+            (range_expression
+              start: (integer_literal)
+              end: (integer_literal))
+            (capture
+              (identifier))
+            body: (block
+              (decl_statement
+                name: (identifier)
+                value: (identifier)))))
+        (expression_statement
+          (while_expression
+            condition: (boolean_literal)
+            body: (block
+              (break_statement))))))))
+
+==================
+callconv on a function-type value
+==================
+
+const Handler := fn(x: i32) callconv(.c): i32;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (callconv
+        convention: (calling_convention))
+      return_type: (primitive_type))))
+
+==================
+callconv on a function type used as a field's type
+==================
+
+struct {
+    handler: fn(x: i32) callconv(.c): i32,
+};
+
+---
+
+(source_file
+  (expression_statement
+    (struct_expression
+      (field_declaration
+        name: (identifier)
+        type: (function_type
+          (parameter
+            name: (identifier)
+            type: (primitive_type))
+          (callconv
+            convention: (calling_convention))
+          return_type: (primitive_type))))))
+
+==================
+Untyped, bound, and constexpr parameter packs
+==================
+
+const sum := fn(rest...): i32 {
+    return total(rest...);
+};
+
+const bounded := fn(rest: impl Writer...): i32 {
+    return 0;
+};
+
+const scaled := fn(constexpr n: usize, xs: []i32): i32 {
+    return n;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (call_expression
+            function: (identifier)
+            arguments: (arguments
+              (pack_expansion
+                value: (identifier))))))))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (impl_type
+          (identifier)))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (integer_literal)))))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        type: (array_type
+          inner: (primitive_type)))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (identifier))))))
+
+==================
+Pack forwarding mixed with ordinary call arguments
+==================
+
+const forward := fn(pre: i32, rest...): i32 {
+    return combine(pre, rest..., 0);
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (call_expression
+            function: (identifier)
+            arguments: (arguments
+              (identifier)
+              (pack_expansion
+                value: (identifier))
+              (integer_literal))))))))

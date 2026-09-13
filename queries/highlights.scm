@@ -1,5 +1,7 @@
 ; Comments
 (comment) @comment
+(doc_comment) @comment.documentation
+(module_doc_comment) @comment.documentation
 
 ; Literals
 (string_literal) @string
@@ -45,6 +47,7 @@
 (impl_parameter name: (identifier) @variable.parameter)
 (import_statement alias: (identifier) @type)
 (using_statement alias: (identifier) @type)
+(errdefer_statement capture: (identifier) @variable.parameter)
 
 ; Types used in position
 (decl_statement type: (identifier) @type)
@@ -80,6 +83,7 @@
   "match"
   "return"
   "defer"
+  "errdefer"
   "loop"
   "for"
   "while"

@@ -18,7 +18,7 @@ const PREC = {
 module.exports = grammar({
   name: "ghoti",
 
-  extras: ($) => [/\s/, $.comment],
+  extras: ($) => [/\s/, $.comment, $.doc_comment, $.module_doc_comment],
 
   word: ($) => $.identifier,
 
@@ -38,12 +38,17 @@ module.exports = grammar({
     [$.cfg_statement],
     [$.function_expression],
     [$.dyn_type],
+    [$.parameter],
   ],
 
   rules: {
     source_file: ($) => repeat($._statement),
 
-    comment: (_) => token(seq("//", /[^\n]*/)),
+    // `//!` (module doc) and `///` (doc) are re-tagged variants of a plain `//` comment; all
+    // three share a prefix so ties are broken by precedence (mirrors lexer.cc's classify_comment).
+    comment: (_) => token(prec(1, seq("//", /[^\n]*/))),
+    doc_comment: (_) => token(prec(2, seq("///", /[^\n]*/))),
+    module_doc_comment: (_) => token(prec(3, seq("//!", /[^\n]*/))),
 
     // ---------------------------------------------------------------- statements
 
@@ -53,6 +58,7 @@ module.exports = grammar({
         $.import_statement,
         $.using_statement,
         $.defer_statement,
+        $.errdefer_statement,
         $.break_statement,
         $.continue_statement,
         $.return_statement,
@@ -108,7 +114,11 @@ module.exports = grammar({
     decl_statement: ($) =>
       seq(
         repeat($._decl_modifier),
-        field("kind", choice("var", "const", "constexpr")),
+        // `constexpr var` (either order) is the one legal pairing: a compile-time-mutable local.
+        field(
+          "kind",
+          choice("var", "const", "constexpr", seq("constexpr", "var"), seq("var", "constexpr")),
+        ),
         field("name", $.identifier),
         optional(seq(":", field("type", $._type))),
         optional(seq(choice(":=", "="), field("value", $._expression))),
@@ -135,6 +145,22 @@ module.exports = grammar({
       ),
 
     defer_statement: ($) => seq("defer", field("body", $._statement_body)),
+
+    // `errdefer <stmt>` / `errdefer |err| <stmt>` (also `|^err|`, `|&err|`, `|_|`): deferred
+    // cleanup that only runs on the error-propagation edge (a `?` unwrap).
+    errdefer_statement: ($) =>
+      seq(
+        "errdefer",
+        optional(
+          seq(
+            "|",
+            optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))),
+            field("capture", choice($.identifier, "_")),
+            "|",
+          ),
+        ),
+        field("body", $._statement_body),
+      ),
     break_statement: ($) =>
       seq("break", optional(seq(":", field("label", $.identifier))), optional($._expression), ";"),
     continue_statement: ($) =>
@@ -246,6 +272,7 @@ module.exports = grammar({
         sepBy(",", choice($.parameter, "...")),
         optional(","),
         ")",
+        optional($.callconv),
         ":",
         field("return_type", $._type),
       ),
@@ -383,12 +410,21 @@ module.exports = grammar({
 
     char_literal: (_) => token(seq("'", choice(/[^'\\]/, /\\./), "'")),
 
-    identifier: (_) => /[A-Za-z_][A-Za-z0-9_]*/,
+    // A bare word, or a raw identifier `@"..."` letting any text (including reserved keywords)
+    // stand in for a name.
+    identifier: (_) =>
+      token(
+        choice(/[A-Za-z_][A-Za-z0-9_]*/, seq('@"', repeat(choice(/[^"\\\n\r]/, /\\./)), '"')),
+      ),
 
     builtin_call_expression: ($) =>
       seq(field("function", alias(/@[A-Za-z_][A-Za-z0-9_]*/, $.builtin_identifier)), $.arguments),
 
-    arguments: ($) => seq("(", sepBy(",", choice($._expression, $._type)), optional(","), ")"),
+    arguments: ($) =>
+      seq("(", sepBy(",", choice($._expression, $._type, $.pack_expansion)), optional(","), ")"),
+
+    // `f(rest...)`: forwards a parameter pack in place, one per call argument.
+    pack_expansion: ($) => seq(field("value", $._expression), "..."),
 
     call_expression: ($) =>
       prec(PREC.CALL, seq(field("function", $._expression), field("arguments", $.arguments))),
@@ -510,8 +546,16 @@ module.exports = grammar({
     self_parameter: ($) =>
       seq(optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))), choice("self", "this")),
 
+    // `x: T`, an untyped pack `rest...`, a bound pack `rest: impl I...`, or `constexpr n: T`.
     parameter: ($) =>
-      seq(field("name", $.identifier), ":", field("type", $._type)),
+      seq(
+        optional("constexpr"),
+        field("name", $.identifier),
+        choice(
+          seq(":", field("type", $._type), optional(prec.dynamic(1, field("pack", "...")))),
+          field("pack", "..."),
+        ),
+      ),
 
     // Shared header: `(self?, params..., ...?) callconv(.x)? : return_type?`
     _fn_header: ($) =>
@@ -753,6 +797,7 @@ module.exports = grammar({
       prec.right(
         seq(
           "for",
+          optional("constexpr"),
           "(",
           sepBy(",", $._expression),
           optional(","),
@@ -767,6 +812,7 @@ module.exports = grammar({
       prec.right(
         seq(
           "while",
+          optional("constexpr"),
           "(",
           field("condition", $._expression),
           ")",

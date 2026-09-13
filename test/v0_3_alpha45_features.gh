@@ -1,0 +1,55 @@
+//! Module-level doc comment.
+
+/// Doc comment on a declaration.
+const answer: i32 = 42;
+
+// A plain comment stays a plain comment.
+
+// Raw identifiers let reserved words act as names.
+const @"var": i32 = 1;
+const @"weird name": i32 = 2;
+
+// errdefer with and without a capture.
+const open_two := fn(): i32 {
+    errdefer cleanup();
+    errdefer |err| logErr(err);
+    errdefer |^err| logErr(err);
+    errdefer |&err| logErr(err);
+    errdefer |_| cleanup();
+    return 0;
+};
+
+// constexpr var, either keyword order.
+constexpr var counter: i32 = 0;
+var constexpr other: i32 = 0;
+
+// for constexpr / while constexpr.
+const unroll := fn(): void {
+    for constexpr (0..4) |i| {
+        const x := i;
+    }
+    while constexpr (counter < 4) {
+        counter += 1;
+    }
+};
+
+// callconv on a function type value, not just a declaration.
+const Handler := fn(x: i32) callconv(.c): i32;
+
+// Parameter packs: untyped, bound, and constexpr params.
+const sum := fn(rest...): i32 {
+    return total(rest...);
+};
+
+const bounded := fn(rest: impl Writer...): i32 {
+    return 0;
+};
+
+const scaled := fn(constexpr n: usize, xs: []i32): i32 {
+    return n;
+};
+
+// Pack forwarding in call arguments, mixed with normal args.
+const forward := fn(pre: i32, rest...): i32 {
+    return combine(pre, rest..., 0);
+};

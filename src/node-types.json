@@ -320,6 +320,10 @@
           "named": true
         },
         {
+          "type": "pack_expansion",
+          "named": true
+        },
+        {
           "type": "parenthesized_expression",
           "named": true
         },
@@ -2389,6 +2393,10 @@
           "named": true
         },
         {
+          "type": "errdefer_statement",
+          "named": true
+        },
+        {
           "type": "expression_statement",
           "named": true
         },
@@ -3063,6 +3071,10 @@
             "named": true
           },
           {
+            "type": "errdefer_statement",
+            "named": true
+          },
+          {
             "type": "expression_statement",
             "named": true
           },
@@ -3114,6 +3126,10 @@
           },
           {
             "type": "defer_statement",
+            "named": true
+          },
+          {
+            "type": "errdefer_statement",
             "named": true
           },
           {
@@ -3179,7 +3195,7 @@
     "named": true,
     "fields": {
       "kind": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -3488,6 +3504,10 @@
           },
           {
             "type": "defer_statement",
+            "named": true
+          },
+          {
+            "type": "errdefer_statement",
             "named": true
           },
           {
@@ -4558,6 +4578,84 @@
     }
   },
   {
+    "type": "errdefer_statement",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "break_statement",
+            "named": true
+          },
+          {
+            "type": "cfg_statement",
+            "named": true
+          },
+          {
+            "type": "continue_statement",
+            "named": true
+          },
+          {
+            "type": "decl_statement",
+            "named": true
+          },
+          {
+            "type": "defer_statement",
+            "named": true
+          },
+          {
+            "type": "errdefer_statement",
+            "named": true
+          },
+          {
+            "type": "expression_statement",
+            "named": true
+          },
+          {
+            "type": "impl_statement",
+            "named": true
+          },
+          {
+            "type": "import_statement",
+            "named": true
+          },
+          {
+            "type": "labeled_statement",
+            "named": true
+          },
+          {
+            "type": "return_statement",
+            "named": true
+          },
+          {
+            "type": "test_statement",
+            "named": true
+          },
+          {
+            "type": "using_statement",
+            "named": true
+          }
+        ]
+      },
+      "capture": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_",
+            "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "export_modifier",
     "named": true,
     "fields": {
@@ -5305,6 +5403,10 @@
             "named": true
           },
           {
+            "type": "errdefer_statement",
+            "named": true
+          },
+          {
             "type": "expression_statement",
             "named": true
           },
@@ -5704,6 +5806,10 @@
       "required": false,
       "types": [
         {
+          "type": "callconv",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         }
@@ -5736,6 +5842,10 @@
           },
           {
             "type": "defer_statement",
+            "named": true
+          },
+          {
+            "type": "errdefer_statement",
             "named": true
           },
           {
@@ -5960,6 +6070,10 @@
           },
           {
             "type": "defer_statement",
+            "named": true
+          },
+          {
+            "type": "errdefer_statement",
             "named": true
           },
           {
@@ -8277,6 +8391,182 @@
     }
   },
   {
+    "type": "pack_expansion",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "address_of_expression",
+            "named": true
+          },
+          {
+            "type": "array_expression",
+            "named": true
+          },
+          {
+            "type": "asm_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean_literal",
+            "named": true
+          },
+          {
+            "type": "builtin_call_expression",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "char_literal",
+            "named": true
+          },
+          {
+            "type": "dereference_expression",
+            "named": true
+          },
+          {
+            "type": "do_while_expression",
+            "named": true
+          },
+          {
+            "type": "dot_expression",
+            "named": true
+          },
+          {
+            "type": "enum_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "for_expression",
+            "named": true
+          },
+          {
+            "type": "function_expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "if_expression",
+            "named": true
+          },
+          {
+            "type": "implicit_access_expression",
+            "named": true
+          },
+          {
+            "type": "index_expression",
+            "named": true
+          },
+          {
+            "type": "initializer_expression",
+            "named": true
+          },
+          {
+            "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
+            "type": "loop_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
+            "named": true
+          },
+          {
+            "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "nullptr_literal",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "reference_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "struct_expression",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "undefined_literal",
+            "named": true
+          },
+          {
+            "type": "underscore",
+            "named": true
+          },
+          {
+            "type": "union_expression",
+            "named": true
+          },
+          {
+            "type": "unreachable_literal",
+            "named": true
+          },
+          {
+            "type": "unwrap_expression",
+            "named": true
+          },
+          {
+            "type": "while_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "parameter",
     "named": true,
     "fields": {
@@ -8290,9 +8580,19 @@
           }
         ]
       },
+      "pack": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "...",
+            "named": false
+          }
+        ]
+      },
       "type": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "array_type",
@@ -9440,6 +9740,10 @@
           "named": true
         },
         {
+          "type": "errdefer_statement",
+          "named": true
+        },
+        {
           "type": "expression_statement",
           "named": true
         },
@@ -10085,6 +10389,10 @@
           },
           {
             "type": "defer_statement",
+            "named": true
+          },
+          {
+            "type": "errdefer_statement",
             "named": true
           },
           {
@@ -10767,6 +11075,11 @@
     "named": false
   },
   {
+    "type": "doc_comment",
+    "named": true,
+    "extra": true
+  },
+  {
     "type": "dyn",
     "named": false
   },
@@ -10776,6 +11089,10 @@
   },
   {
     "type": "enum",
+    "named": false
+  },
+  {
+    "type": "errdefer",
     "named": false
   },
   {
@@ -10869,6 +11186,11 @@
   {
     "type": "match",
     "named": false
+  },
+  {
+    "type": "module_doc_comment",
+    "named": true,
+    "extra": true
   },
   {
     "type": "move",
