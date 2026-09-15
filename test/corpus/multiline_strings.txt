@@ -1,0 +1,29 @@
+==================
+Multiline string literal, single line
+==================
+
+const a := \\Hello, World!
+;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (multiline_string_literal)))
+
+==================
+Multiline string literal, indented continuations
+==================
+
+const a := \\This is the way you use multiline
+    \\strings in ghoti
+    \\       you have "full" control of the raw string
+;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (multiline_string_literal)))

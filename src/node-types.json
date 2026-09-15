@@ -120,6 +120,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -313,6 +317,10 @@
         },
         {
           "type": "module_access_expression",
+          "named": true
+        },
+        {
+          "type": "multiline_string_literal",
           "named": true
         },
         {
@@ -515,6 +523,10 @@
         },
         {
           "type": "module_access_expression",
+          "named": true
+        },
+        {
+          "type": "multiline_string_literal",
           "named": true
         },
         {
@@ -763,6 +775,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -866,6 +882,10 @@
         "multiple": false,
         "required": false,
         "types": [
+          {
+            "type": "multiline_string_literal",
+            "named": true
+          },
           {
             "type": "string_literal",
             "named": true
@@ -1091,6 +1111,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -1284,6 +1308,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -1524,6 +1552,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -1780,6 +1812,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -2042,6 +2078,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -2309,6 +2349,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -2564,6 +2608,10 @@
           "named": true
         },
         {
+          "type": "multiline_string_literal",
+          "named": true
+        },
+        {
           "type": "nullptr_literal",
           "named": true
         },
@@ -2772,6 +2820,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -2984,6 +3036,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -3409,6 +3465,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -3663,6 +3723,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -3849,6 +3913,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -4032,6 +4100,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -4454,6 +4526,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -4792,6 +4868,10 @@
           "named": true
         },
         {
+          "type": "multiline_string_literal",
+          "named": true
+        },
+        {
           "type": "nullptr_literal",
           "named": true
         },
@@ -5050,6 +5130,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -5319,6 +5403,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -5565,6 +5653,10 @@
         },
         {
           "type": "module_access_expression",
+          "named": true
+        },
+        {
+          "type": "multiline_string_literal",
           "named": true
         },
         {
@@ -5992,6 +6084,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -6654,6 +6750,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -6821,6 +6921,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -7000,6 +7104,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -7172,6 +7280,10 @@
         },
         {
           "type": "module_access_expression",
+          "named": true
+        },
+        {
+          "type": "multiline_string_literal",
           "named": true
         },
         {
@@ -7540,6 +7652,10 @@
           "named": true
         },
         {
+          "type": "multiline_string_literal",
+          "named": true
+        },
+        {
           "type": "nullptr_literal",
           "named": true
         },
@@ -7731,6 +7847,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -7852,6 +7972,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -7992,6 +8116,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -8335,6 +8463,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -8508,6 +8640,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -8783,6 +8919,10 @@
           "named": true
         },
         {
+          "type": "multiline_string_literal",
+          "named": true
+        },
+        {
           "type": "nullptr_literal",
           "named": true
         },
@@ -9039,6 +9179,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -9223,6 +9367,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -9396,6 +9544,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -9648,6 +9800,10 @@
         },
         {
           "type": "module_access_expression",
+          "named": true
+        },
+        {
+          "type": "multiline_string_literal",
           "named": true
         },
         {
@@ -9956,6 +10112,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -10191,6 +10351,10 @@
           },
           {
             "type": "module_access_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
             "named": true
           },
           {
@@ -10552,6 +10716,10 @@
             "named": true
           },
           {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
             "type": "nullptr_literal",
             "named": true
           },
@@ -10720,6 +10888,10 @@
         },
         {
           "type": "module_access_expression",
+          "named": true
+        },
+        {
+          "type": "multiline_string_literal",
           "named": true
         },
         {
@@ -11195,6 +11367,10 @@
   {
     "type": "move",
     "named": false
+  },
+  {
+    "type": "multiline_string_literal",
+    "named": true
   },
   {
     "type": "mut",

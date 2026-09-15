@@ -5,6 +5,7 @@
 
 ; Literals
 (string_literal) @string
+(multiline_string_literal) @string
 (char_literal) @string
 (integer_literal) @number
 (float_literal) @number

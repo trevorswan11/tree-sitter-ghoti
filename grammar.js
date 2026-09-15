@@ -308,6 +308,7 @@ module.exports = grammar({
         $.integer_literal,
         $.float_literal,
         $.string_literal,
+        $.multiline_string_literal,
         $.char_literal,
         $.boolean_literal,
         $.undefined_literal,
@@ -407,6 +408,17 @@ module.exports = grammar({
       ),
 
     string_literal: (_) => token(seq('"', repeat(choice(/[^"\\]/, /\\./)), '"')),
+
+    // A `\\`-prefixed line, optionally continued by further `\\`-prefixed lines. Continuation
+    // markers may be indented; the leading indentation and marker are not part of the value.
+    multiline_string_literal: (_) =>
+      token(
+        seq(
+          "\\\\",
+          /[^\n]*/,
+          repeat(seq("\n", /[ \t]*/, "\\\\", /[^\n]*/)),
+        ),
+      ),
 
     char_literal: (_) => token(seq("'", choice(/[^'\\]/, /\\./), "'")),
 
@@ -704,7 +716,7 @@ module.exports = grammar({
 
     asm_clause: ($) =>
       choice(
-        seq("template", ":", field("template", $.string_literal)),
+        seq("template", ":", field("template", choice($.string_literal, $.multiline_string_literal))),
         seq("outputs", ":", field("outputs", $.asm_operand_list)),
         seq("inputs", ":", field("inputs", $.asm_operand_list)),
         seq(
@@ -748,6 +760,7 @@ module.exports = grammar({
         $.integer_literal,
         $.float_literal,
         $.string_literal,
+        $.multiline_string_literal,
         $.char_literal,
         $.boolean_literal,
         $.underscore,
