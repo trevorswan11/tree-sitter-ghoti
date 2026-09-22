@@ -37,8 +37,9 @@ module.exports = grammar({
     [$._enumerator_cfg_body, $._member_cfg_body],
     [$.cfg_statement],
     [$.function_expression],
-    [$.dyn_type],
+    [$.dyn_type, $._expression],
     [$.parameter],
+    [$.constexpr_expression, $._expression],
   ],
 
   rules: {
@@ -62,6 +63,7 @@ module.exports = grammar({
         $.break_statement,
         $.continue_statement,
         $.return_statement,
+        $.discard_statement,
         $.test_statement,
         $.impl_statement,
         $.cfg_statement,
@@ -91,7 +93,22 @@ module.exports = grammar({
       ),
 
     _decl_modifier: ($) =>
-      choice("pub", $.extern_modifier, $.export_modifier, "threadlocal", "weak"),
+      choice(
+        "pub",
+        $.extern_modifier,
+        $.export_modifier,
+        "threadlocal",
+        "weak",
+        $.discardable_modifier,
+      ),
+
+    // Declaration-level attribute, not a callable builtin: bare `@discardable` or
+    // `@discardable(cond)` (a condition expression, not call arguments).
+    discardable_modifier: ($) =>
+      seq(
+        alias("@discardable", $.builtin_identifier),
+        optional(seq("(", field("condition", $._expression), ")")),
+      ),
 
     // `extern` / `extern("lib")` / `extern("lib", "sym")`
     extern_modifier: ($) =>
@@ -127,7 +144,7 @@ module.exports = grammar({
 
     import_statement: ($) =>
       seq(
-        repeat($._decl_modifier),
+        optional("pub"),
         "import",
         field("path", choice($.string_literal, $.identifier)),
         optional(seq("as", field("alias", $.identifier))),
@@ -136,13 +153,16 @@ module.exports = grammar({
 
     using_statement: ($) =>
       seq(
-        repeat($._decl_modifier),
+        optional("pub"),
         "using",
         field("alias", $.identifier),
         "=",
         field("type", $._type),
         ";",
       ),
+
+    // `_ = expr;`: evaluates `expr` and discards the result (silences an unused-value error).
+    discard_statement: ($) => seq("_", "=", field("value", $._expression), ";"),
 
     defer_statement: ($) => seq("defer", field("body", $._statement_body)),
 
@@ -200,6 +220,7 @@ module.exports = grammar({
         $.do_while_expression,
         $.loop_expression,
         $.labeled_expression,
+        $.constexpr_expression,
         $.block,
       ),
 
@@ -215,8 +236,8 @@ module.exports = grammar({
         $.impl_type,
         $.primitive_type,
         $.identifier,
-        $.module_access_expression,
-        $.call_expression, // e.g. std::ArrayList(u8)
+        $.dot_expression, // e.g. std.ArrayList, std.os.Errno
+        $.call_expression, // e.g. std.ArrayList(u8)
         $.struct_expression,
         $.union_expression,
         $.enum_expression,
@@ -239,13 +260,12 @@ module.exports = grammar({
         field("inner", $._type),
       ),
 
-    // `dyn I` / `dyn I(Assoc = T, ...)`; wrapped as `&dyn I` / `^dyn I` via reference/pointer
-    // types since `dyn` sits where a type normally would.
+    // `dyn I` / `dyn mod.I` / `dyn I(Assoc = T, ...)`; wrapped as `&dyn I` / `^dyn I` via
+    // reference/pointer types since `dyn` sits where a type normally would.
     dyn_type: ($) =>
       seq(
         "dyn",
-        field("interface", $.identifier),
-        repeat(seq("::", field("interface", $.identifier))),
+        field("interface", choice($.identifier, $.dot_expression)),
         optional($.dyn_assoc_bindings),
       ),
 
@@ -314,13 +334,12 @@ module.exports = grammar({
         $.undefined_literal,
         $.unreachable_literal,
         $.nullptr_literal,
-        $.underscore,
         $.builtin_call_expression,
+        $.cfg_value_guard_call,
         $.call_expression,
         $.index_expression,
         $.dot_expression,
         $.implicit_access_expression,
-        $.module_access_expression,
         $.initializer_expression,
         $.array_expression,
         $.unary_expression,
@@ -344,8 +363,36 @@ module.exports = grammar({
         $.do_while_expression,
         $.loop_expression,
         $.labeled_expression,
+        $.constexpr_expression,
         $.block,
         $.parenthesized_expression,
+      ),
+
+    // `constexpr { ... }` / `constexpr label: { ... }`: a compile-time-evaluated block usable as
+    // a statement or, labeled, as a `break`-able value expression.
+    constexpr_expression: ($) =>
+      seq(
+        "constexpr",
+        optional(seq(field("label", $.identifier), ":")),
+        field("body", $.block),
+      ),
+
+    // `@cfgValue(pred => val, ..., _ => fallback)`: the guard-arm form. The plain single-argument
+    // form `@cfgValue(x)` is just an ordinary builtin_call_expression.
+    cfg_value_guard_call: ($) =>
+      seq(
+        field("function", alias("@cfgValue", $.builtin_identifier)),
+        "(",
+        sepBy1(",", $.cfg_guard_arm),
+        optional(","),
+        ")",
+      ),
+
+    cfg_guard_arm: ($) =>
+      seq(
+        field("predicate", choice($._expression, "_")),
+        "=>",
+        field("value", $._expression),
       ),
 
     labeled_expression: ($) =>
@@ -448,12 +495,6 @@ module.exports = grammar({
       prec(PREC.FIELD, seq(field("object", $._expression), ".", field("member", $.identifier))),
 
     implicit_access_expression: ($) => prec(PREC.FIELD, seq(".", field("member", $.identifier))),
-
-    module_access_expression: ($) =>
-      prec.left(
-        PREC.FIELD,
-        seq(field("module", $._expression), "::", field("member", $.identifier)),
-      ),
 
     initializer_expression: ($) =>
       choice(
@@ -732,8 +773,9 @@ module.exports = grammar({
 
     asm_operand_list: ($) => seq("(", sepBy(",", $.asm_operand), optional(","), ")"),
 
+    // `"=r"(x)` binds the output/input to `x`; `"=r"(_)` discards it (no expression is bound).
     asm_operand: ($) =>
-      seq(field("constraint", $.string_literal), "=", field("value", $._expression)),
+      seq(field("constraint", $.string_literal), "=", field("value", choice($._expression, "_"))),
 
     asm_option: (_) => choice("volatile", "noreturn", "intel", "att", "align_stack"),
 
@@ -760,15 +802,15 @@ module.exports = grammar({
         $.integer_literal,
         $.float_literal,
         $.string_literal,
-        $.multiline_string_literal,
         $.char_literal,
         $.boolean_literal,
         $.underscore,
         $.dot_expression,
         $.implicit_access_expression,
-        $.module_access_expression,
         $.call_expression,
         $.index_expression,
+        $.array_expression,
+        $.function_expression,
         $.dereference_expression,
         $.reference_expression,
         $.address_of_expression,

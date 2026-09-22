@@ -111,7 +111,7 @@ Trait impl, inherent impl, and parameterized impl blocks
 ==================
 
 impl Writer for File {
-    using Error = os::Error;
+    using Error = os.Error;
     const preferred_chunk := 8192;
 
     pub const write := fn(&mut self, bytes: []u8): i32 {
@@ -146,8 +146,8 @@ impl(T: type, constexpr n: usize) Debug for Box(T, n) {
     body: (impl_body
       (using_statement
         alias: (identifier)
-        type: (module_access_expression
-          module: (identifier)
+        type: (dot_expression
+          object: (identifier)
           member: (identifier)))
       (decl_statement
         name: (identifier)
@@ -571,8 +571,7 @@ const syscall_write := fn(fd: i32, buf: ^u8, len: usize): i32 {
             (asm_clause
               outputs: (asm_operand_list
                 (asm_operand
-                  constraint: (string_literal)
-                  value: (underscore))))
+                  constraint: (string_literal))))
             (asm_clause
               inputs: (asm_operand_list
                 (asm_operand
