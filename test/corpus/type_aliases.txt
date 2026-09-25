@@ -1,0 +1,116 @@
+==================
+Type aliases are const declarations
+==================
+
+const Byte := u8;
+pub const Handle := ^mut opaque;
+const Kind := type;
+const Never := noreturn;
+const Bytes := []u8;
+const Pair := [2]i32;
+const Callback := ^fn(status: i32) callconv(.win64): void;
+constexpr NewRes := Result(T, NewErr);
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (identifier))
+  (decl_statement
+    name: (identifier)
+    value: (pointer_type
+      inner: (modified_type
+        inner: (primitive_type))))
+  (decl_statement
+    name: (identifier)
+    value: (identifier))
+  (decl_statement
+    name: (identifier)
+    value: (identifier))
+  (decl_statement
+    name: (identifier)
+    value: (array_type
+      inner: (primitive_type)))
+  (decl_statement
+    name: (identifier)
+    value: (array_type
+      size: (integer_literal)
+      inner: (primitive_type)))
+  (decl_statement
+    name: (identifier)
+    value: (pointer_type
+      inner: (function_type
+        (parameter
+          name: (identifier)
+          type: (primitive_type))
+        (callconv
+          convention: (calling_convention))
+        return_type: (primitive_type))))
+  (decl_statement
+    name: (identifier)
+    value: (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (identifier)
+        (identifier)))))
+
+==================
+dyn interface aliases in value position
+==================
+
+const Any := &dyn Writer;
+const AnyMut := ^mut dyn io.Writer(Error = u8);
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (reference_type
+      inner: (dyn_type
+        interface: (identifier))))
+  (decl_statement
+    name: (identifier)
+    value: (pointer_type
+      inner: (modified_type
+        inner: (dyn_type
+          interface: (dot_expression
+            object: (identifier)
+            member: (identifier))
+          (dyn_assoc_bindings
+            (dyn_assoc_binding
+              name: (identifier)
+              type: (primitive_type))))))))
+
+==================
+Array literals still take precedence over a type-valued array
+==================
+
+const a := [3]i32{ 1, 2, 3 };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (array_expression
+      array_type: (array_type
+        size: (integer_literal)
+        inner: (primitive_type))
+      (integer_literal)
+      (integer_literal)
+      (integer_literal))))
+
+==================
+using is an ordinary identifier
+==================
+
+const using := 3;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (integer_literal)))

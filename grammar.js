@@ -24,8 +24,11 @@ module.exports = grammar({
 
   conflicts: ($) => [
     [$._type, $._expression],
-    [$.extern_modifier, $.struct_expression],
     [$._type, $.array_expression],
+    [$.expression_statement, $._expression, $._if_branch],
+    [$.expression_statement, $._if_branch],
+    [$.initializer_expression, $._if_branch],
+    [$.extern_modifier, $.struct_expression],
     [$._expression, $.labeled_expression],
     [$.labeled_statement, $._expression, $.labeled_expression],
     [$._expression, $.expression_statement],
@@ -57,7 +60,6 @@ module.exports = grammar({
       choice(
         $.decl_statement,
         $.import_statement,
-        $.using_statement,
         $.defer_statement,
         $.errdefer_statement,
         $.break_statement,
@@ -138,8 +140,20 @@ module.exports = grammar({
         ),
         field("name", $.identifier),
         optional(seq(":", field("type", $._type))),
-        optional(seq(choice(":=", "="), field("value", $._expression))),
+        optional(seq(choice(":=", "="), field("value", $._value))),
         ";",
+      ),
+
+    // A value slot that may also hold a type with no expression spelling, e.g.
+    // `const Bytes := []u8;`, `const Any := &dyn Writer;`, or `return [n]T;`. Where both readings
+    // parse (`^i32`), the expression wins.
+    _value: ($) =>
+      choice(
+        $._expression,
+        prec.dynamic(-1, prec(-1, $.array_type)),
+        prec.dynamic(-1, $.pointer_type),
+        prec.dynamic(-1, $.reference_type),
+        $.dyn_type,
       ),
 
     import_statement: ($) =>
@@ -148,16 +162,6 @@ module.exports = grammar({
         "import",
         field("path", choice($.string_literal, $.identifier)),
         optional(seq("as", field("alias", $.identifier))),
-        ";",
-      ),
-
-    using_statement: ($) =>
-      seq(
-        optional("pub"),
-        "using",
-        field("alias", $.identifier),
-        "=",
-        field("type", $._type),
         ";",
       ),
 
@@ -185,7 +189,7 @@ module.exports = grammar({
       seq("break", optional(seq(":", field("label", $.identifier))), optional($._expression), ";"),
     continue_statement: ($) =>
       seq("continue", optional(seq(":", field("label", $.identifier))), ";"),
-    return_statement: ($) => seq("return", optional($._expression), ";"),
+    return_statement: ($) => seq("return", optional($._value), ";"),
 
     test_statement: ($) =>
       seq("test", optional(field("description", $.string_literal)), field("body", $.block)),
@@ -635,7 +639,7 @@ module.exports = grammar({
 
     // -------------------------------------------------------------- struct/union/enum
 
-    _member: ($) => choice($.decl_statement, $.import_statement, $.using_statement),
+    _member: ($) => choice($.decl_statement, $.import_statement),
 
     // `@cfg(pred) <one member or { member* }> [else @cfg(...) ...]* [else ...]?`
     member_cfg_group: ($) =>
@@ -789,10 +793,32 @@ module.exports = grammar({
           "(",
           field("condition", $._expression),
           ")",
-          field("consequence", $._statement_body),
-          optional(seq("else", field("alternate", $._statement_body))),
+          field("consequence", $._if_branch),
+          optional(seq("else", field("alternate", $._if_branch))),
         ),
       ),
+
+    // A branch is a statement (`if (c) { ... }`, `if (c) return x;`) or, in value position, a
+    // bare expression (`return if (c) a else b;`)
+    // `else if` chains nest directly rather than through an expression statement
+    _if_branch: ($) =>
+      choice(
+        prec.dynamic(1, $.if_expression),
+        $._statement_body,
+        prec.dynamic(-1, $._expression),
+      ),
+
+    // `return` / `break` / `continue` used as a value (a `match` arm body) take no `;`
+    _jump_value: ($) =>
+      choice(
+        alias($._return_value, $.return_statement),
+        alias($._break_value, $.break_statement),
+        alias($._continue_value, $.continue_statement),
+      ),
+    _return_value: ($) => seq("return", optional($._value)),
+    _break_value: ($) =>
+      seq("break", optional(seq(":", field("label", $.identifier))), optional($._expression)),
+    _continue_value: ($) => seq("continue", optional(seq(":", field("label", $.identifier)))),
 
     // Patterns are restricted (not full expressions) so `|capture|` never collides with the `|`
     // bitwise-or operator
@@ -820,6 +846,8 @@ module.exports = grammar({
     match_arm: ($) =>
       seq(
         field("pattern", sepBy1(",", $._pattern)),
+        // A trailing comma before `=>` keeps one pattern per line (`.a, .b, => x`)
+        optional(","),
         "=>",
         optional(
           seq(
@@ -829,7 +857,7 @@ module.exports = grammar({
             "|",
           ),
         ),
-        field("body", $._expression),
+        field("body", choice($._expression, $._jump_value)),
       ),
 
     match_expression: ($) =>

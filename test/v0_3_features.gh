@@ -25,7 +25,7 @@ const Marker := interface {};
 
 // impl blocks
 impl Writer for File {
-    using Error = os.Error;
+    const Error := os.Error;
     const preferred_chunk := 8192;
 
     pub const write := fn(&mut self, bytes: []u8): i32 {

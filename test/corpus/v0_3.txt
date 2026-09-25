@@ -111,7 +111,7 @@ Trait impl, inherent impl, and parameterized impl blocks
 ==================
 
 impl Writer for File {
-    using Error = os.Error;
+    const Error := os.Error;
     const preferred_chunk := 8192;
 
     pub const write := fn(&mut self, bytes: []u8): i32 {
@@ -144,9 +144,9 @@ impl(T: type, constexpr n: usize) Debug for Box(T, n) {
     type: (identifier)
     target: (identifier)
     body: (impl_body
-      (using_statement
-        alias: (identifier)
-        type: (dot_expression
+      (decl_statement
+        name: (identifier)
+        value: (dot_expression
           object: (identifier)
           member: (identifier)))
       (decl_statement
