@@ -1,0 +1,245 @@
+==================
+extern fn types are thin C-ABI function pointers
+==================
+
+const Thin := extern fn(a: i32) callconv(.c): i32;
+var cb: extern fn(a: i32): i32 = undefined;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (callconv
+        convention: (calling_convention))
+      return_type: (primitive_type)))
+  (decl_statement
+    name: (identifier)
+    type: (function_type
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type))
+    value: (undefined_literal)))
+
+==================
+fn types under reference and pointer modifiers
+==================
+
+var by_ref: &fn(a: i32): i32 = undefined;
+var maybe: ^fn(a: i32): i32 = nullptr;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    type: (reference_type
+      inner: (function_type
+        (parameter
+          name: (identifier)
+          type: (primitive_type))
+        return_type: (primitive_type)))
+    value: (undefined_literal))
+  (decl_statement
+    name: (identifier)
+    type: (pointer_type
+      inner: (function_type
+        (parameter
+          name: (identifier)
+          type: (primitive_type))
+        return_type: (primitive_type)))
+    value: (nullptr_literal)))
+
+==================
+dyn Fn sugar in value, reference, and pointer positions
+==================
+
+const Op := dyn Fn(n: i32): i32;
+const use := fn(f: &dyn Fn(n: i32): i32, g: ^dyn Fn(): void): i32 { return f(1); };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (dyn_function_type
+      name: (identifier)
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type)))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (reference_type
+          inner: (dyn_function_type
+            name: (identifier)
+            (parameter
+              name: (identifier)
+              type: (primitive_type))
+            return_type: (primitive_type))))
+      (parameter
+        name: (identifier)
+        type: (pointer_type
+          inner: (dyn_function_type
+            name: (identifier)
+            return_type: (primitive_type))))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (call_expression
+            function: (identifier)
+            arguments: (arguments
+              (integer_literal))))))))
+
+==================
+A user interface named Fn still reads as a dyn type
+==================
+
+const read := fn(x: &dyn Fn(Out = i32)): i32 { return x.get(); };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (reference_type
+          inner: (dyn_type
+            interface: (identifier)
+            (dyn_assoc_bindings
+              (dyn_assoc_binding
+                name: (identifier)
+                type: (primitive_type))))))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (call_expression
+            function: (dot_expression
+              object: (identifier)
+              member: (identifier))
+            arguments: (arguments)))))))
+
+==================
+A bare dyn type is aliased without indirection
+==================
+
+const Bound := dyn Sink(Out = i32);
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (dyn_type
+      interface: (identifier)
+      (dyn_assoc_bindings
+        (dyn_assoc_binding
+          name: (identifier)
+          type: (primitive_type))))))
+
+==================
+A fn type as a function literal's return type before its body
+==================
+
+const pick := fn(): fn(n: i32): i32 { return inc; };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (function_type
+        (parameter
+          name: (identifier)
+          type: (primitive_type))
+        return_type: (primitive_type))
+      body: (block
+        (return_statement
+          (identifier))))))
+
+==================
+A call result is called directly
+==================
+
+const chained := fn(): i32 { return make()()(1); };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (call_expression
+            function: (call_expression
+              function: (call_expression
+                function: (identifier)
+                arguments: (arguments))
+              arguments: (arguments))
+            arguments: (arguments
+              (integer_literal))))))))
+
+==================
+if constexpr without a condition branches on the evaluation context
+==================
+
+const where := fn(): i32 {
+    if constexpr { n += 5; }
+    return if constexpr 1 else 2;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (if_expression
+            consequence: (expression_statement
+              (block
+                (expression_statement
+                  (assignment_expression
+                    left: (identifier)
+                    right: (integer_literal)))))))
+        (return_statement
+          (if_expression
+            consequence: (integer_literal)
+            alternate: (integer_literal)))))))
+
+==================
+if constexpr with a parenthesized condition keeps its condition
+==================
+
+const pick := fn(): i32 { return if constexpr (n > 1) n else 0; };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (if_expression
+            condition: (binary_expression
+              left: (identifier)
+              right: (integer_literal))
+            consequence: (identifier)
+            alternate: (integer_literal)))))))

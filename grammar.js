@@ -41,6 +41,8 @@ module.exports = grammar({
     [$.cfg_statement],
     [$.function_expression],
     [$.dyn_type, $._expression],
+    [$.dyn_type, $.dyn_function_type, $._expression],
+    [$.parenthesized_expression, $.if_expression],
     [$.parameter],
     [$.constexpr_expression, $._expression],
   ],
@@ -154,6 +156,7 @@ module.exports = grammar({
         prec.dynamic(-1, $.pointer_type),
         prec.dynamic(-1, $.reference_type),
         $.dyn_type,
+        $.dyn_function_type,
       ),
 
     import_statement: ($) =>
@@ -237,6 +240,7 @@ module.exports = grammar({
         $.array_type, // also covers slice types `[]T` (empty size)
         $.function_type,
         $.dyn_type,
+        $.dyn_function_type,
         $.impl_type,
         $.primitive_type,
         $.identifier,
@@ -273,6 +277,21 @@ module.exports = grammar({
         optional($.dyn_assoc_bindings),
       ),
 
+    // `dyn Fn(n: i32): R` is sugar for the erased `fn(n: i32): R`; `Fn` stays a plain identifier so
+    // a user `interface Fn` still parses as a `dyn_type`, told apart by `name:` vs `name =`.
+    dyn_function_type: ($) =>
+      seq(
+        "dyn",
+        field("name", $.identifier),
+        "(",
+        sepBy(",", $.parameter),
+        optional(","),
+        ")",
+        optional($.callconv),
+        ":",
+        field("return_type", $._type),
+      ),
+
     dyn_assoc_bindings: ($) => seq("(", sepBy(",", $.dyn_assoc_binding), optional(","), ")"),
 
     dyn_assoc_binding: ($) => seq(field("name", $.identifier), "=", field("type", $._type)),
@@ -288,9 +307,10 @@ module.exports = grammar({
       seq(".", choice("c", "sysv", "win64", "stdcall", "fastcall", "aapcs")),
 
     // Every non-variadic parameter must be named (`fn(x: i32, done: ^bool): void`), not bare
-    // types; the return type is mandatory.
+    // types; the return type is mandatory. `extern fn` is the thin, C-ABI code pointer.
     function_type: ($) =>
       seq(
+        optional("extern"),
         "fn",
         "(",
         sepBy(",", choice($.parameter, "...")),
@@ -634,7 +654,7 @@ module.exports = grammar({
     function_expression: ($) =>
       choice(
         seq(optional(choice("move", "naked")), "fn", $._fn_header, field("body", $.block)),
-        prec.dynamic(-1, seq(optional(choice("move", "naked")), "fn", $._fn_header)),
+        prec.dynamic(-1, seq(optional(choice("move", "naked", "extern")), "fn", $._fn_header)),
       ),
 
     // -------------------------------------------------------------- struct/union/enum
@@ -786,15 +806,30 @@ module.exports = grammar({
     // -------------------------------------------------------------- control flow
 
     if_expression: ($) =>
-      prec.right(
-        seq(
-          "if",
-          optional("constexpr"),
-          "(",
-          field("condition", $._expression),
-          ")",
-          field("consequence", $._if_branch),
-          optional(seq("else", field("alternate", $._if_branch))),
+      choice(
+        prec.right(
+          seq(
+            "if",
+            optional("constexpr"),
+            "(",
+            field("condition", $._expression),
+            ")",
+            field("consequence", $._if_branch),
+            optional(seq("else", field("alternate", $._if_branch))),
+          ),
+        ),
+        // `if constexpr a else b`: `a` under compile-time evaluation, `b` at runtime. A `(`
+        // right after `constexpr` always starts a condition instead.
+        prec.right(
+          prec.dynamic(
+            -1,
+            seq(
+              "if",
+              "constexpr",
+              field("consequence", $._if_branch),
+              optional(seq("else", field("alternate", $._if_branch))),
+            ),
+          ),
         ),
       ),
 
