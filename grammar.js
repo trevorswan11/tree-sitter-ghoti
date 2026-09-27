@@ -462,10 +462,23 @@ module.exports = grammar({
       ),
 
     // Float suffix is `f`/`F` + width digits (`f32`, `f64`, `f16`, `f128`, `f80`); a bare
-    // `f`-suffixed integer (no `.`) is also a float, as is an exponent with no `.`.
+    // `f`-suffixed integer (no `.`) is also a float, as is an exponent with no `.`. Hex floats
+    // (`0x1.8p3`, `0x1p-4`, `0xA.8`) take a decimal `p` exponent, and since `f` is a hex digit
+    // their suffix can only follow that exponent.
     float_literal: (_) =>
       token(
         choice(
+          seq(
+            /0[xX][0-9a-fA-F][0-9a-fA-F_]*/,
+            ".",
+            /[0-9a-fA-F][0-9a-fA-F_]*/,
+            optional(seq(/[pP][+-]?[0-9][0-9_]*/, optional(seq(/[uUiIzZlLfF]/, /[A-Za-z0-9]*/)))),
+          ),
+          seq(
+            /0[xX][0-9a-fA-F][0-9a-fA-F_]*/,
+            /[pP][+-]?[0-9][0-9_]*/,
+            optional(seq(/[uUiIzZlLfF]/, /[A-Za-z0-9]*/)),
+          ),
           seq(
             /[0-9][0-9_]*/,
             ".",
