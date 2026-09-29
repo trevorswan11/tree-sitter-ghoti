@@ -1,0 +1,159 @@
+==================
+Attribute list on a declaration
+==================
+
+/// Closes the file.
+@[discardable] pub const close := fn(): i32 { return 0; };
+
+---
+
+(source_file
+  (doc_comment)
+  (decl_statement
+    attributes: (attribute_list
+      (attribute
+        name: (identifier)))
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (integer_literal))))))
+
+==================
+Attribute list with arguments and a trailing comma
+==================
+
+@[inline(.always), align(16), deprecated("use newer"),]
+const f := fn(): void {};
+
+---
+
+(source_file
+  (decl_statement
+    attributes: (attribute_list
+      (attribute
+        name: (identifier)
+        (arguments
+          (implicit_access_expression
+            member: (identifier))))
+      (attribute
+        name: (identifier)
+        (arguments
+          (integer_literal)))
+      (attribute
+        name: (identifier)
+        (arguments
+          (string_literal))))
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block))))
+
+==================
+Attribute list on a function literal and fields
+==================
+
+const stub := @[naked] fn(): void {};
+const S := struct { @[align(8)] a: u8, @[deprecated] pub b: u8 };
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      attributes: (attribute_list
+        (attribute
+          name: (identifier)))
+      return_type: (primitive_type)
+      body: (block)))
+  (decl_statement
+    name: (identifier)
+    value: (struct_expression
+      (field_declaration
+        attributes: (attribute_list
+          (attribute
+            name: (identifier)
+            (arguments
+              (integer_literal))))
+        name: (identifier)
+        type: (primitive_type))
+      (field_declaration
+        attributes: (attribute_list
+          (attribute
+            name: (identifier)))
+        name: (identifier)
+        type: (primitive_type)))))
+
+==================
+Attribute list on an interface method
+==================
+
+const Closer := interface {
+    @[discardable] pub const close := fn(&self): i32;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (interface_expression
+      (interface_method
+        attributes: (attribute_list
+          (attribute
+            name: (identifier)))
+        name: (identifier)
+        (self_parameter)
+        return_type: (primitive_type)))))
+
+==================
+Branch hints and scoped safety are builtin calls
+==================
+
+const f := fn(c: bool): i32 {
+    @setRuntimeSafety(@optimizeMode() == .debug);
+    if (c) {
+        @branchHint(.likely);
+        return 1;
+    }
+    return 0;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (builtin_call_expression
+            function: (builtin_identifier)
+            (arguments
+              (binary_expression
+                left: (builtin_call_expression
+                  function: (builtin_identifier)
+                  (arguments))
+                right: (implicit_access_expression
+                  member: (identifier))))))
+        (expression_statement
+          (if_expression
+            condition: (identifier)
+            consequence: (expression_statement
+              (block
+                (expression_statement
+                  (builtin_call_expression
+                    function: (builtin_identifier)
+                    (arguments
+                      (implicit_access_expression
+                        member: (identifier)))))
+                (return_statement
+                  (integer_literal))))))
+        (return_statement
+          (integer_literal))))))

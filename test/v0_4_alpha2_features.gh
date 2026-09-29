@@ -1,0 +1,33 @@
+//! Syntax introduced in v0.4.0-alpha.2: attribute lists, build modes, branch hints.
+
+/// Closes the handle; the error is usually ignorable.
+@[discardable] pub const close := fn(): i32 { return 0; };
+
+@[inline(if (@optimizeMode() == .debug) .never else .always), align(32),]
+const hot := fn(x: i32): i32 { return x * 2; };
+
+@[deprecated("use `hot`")]
+const warm := fn(x: i32): i32 { return hot(x); };
+
+const trampoline := @[naked] fn(): void {};
+
+const Packet := struct {
+    tag: u8,
+    @[align(16)] payload: [16]u8,
+    @[deprecated("use payload")] pub legacy: u8,
+};
+
+const Closer := interface {
+    @[discardable] pub const close := fn(&self): i32;
+};
+
+const pick := fn(c: bool): i32 {
+    @setRuntimeSafety(@runtimeSafety());
+    if (c) {
+        @branchHint(.likely);
+        return 1;
+    } else {
+        @branchHint(.cold);
+        return 2;
+    }
+};

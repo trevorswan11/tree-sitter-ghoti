@@ -103,16 +103,13 @@ module.exports = grammar({
         $.export_modifier,
         "threadlocal",
         "weak",
-        $.discardable_modifier,
       ),
 
-    // Declaration-level attribute, not a callable builtin: bare `@discardable` or
-    // `@discardable(cond)` (a condition expression, not call arguments).
-    discardable_modifier: ($) =>
-      seq(
-        alias("@discardable", $.builtin_identifier),
-        optional(seq("(", field("condition", $._expression), ")")),
-      ),
+    // `@[name, name(args...), ...]` ahead of a declaration, field, interface method, or
+    // function literal; a trailing comma asks the formatter to keep it on its own line.
+    attribute_list: ($) => seq("@[", sepBy1(",", $.attribute), optional(","), "]"),
+
+    attribute: ($) => seq(field("name", $.identifier), optional($.arguments)),
 
     // `extern` / `extern("lib")` / `extern("lib", "sym")`
     extern_modifier: ($) =>
@@ -134,6 +131,7 @@ module.exports = grammar({
 
     decl_statement: ($) =>
       seq(
+        optional(field("attributes", $.attribute_list)),
         repeat($._decl_modifier),
         // `constexpr var` (either order) is the one legal pairing: a compile-time-mutable local.
         field(
@@ -670,8 +668,14 @@ module.exports = grammar({
     // consuming a trailing `{ ... }` as the body whenever one is present.
     function_expression: ($) =>
       choice(
-        seq(optional(choice("move", "naked")), "fn", $._fn_header, field("body", $.block)),
-        prec.dynamic(-1, seq(optional(choice("move", "naked", "extern")), "fn", $._fn_header)),
+        seq(
+          optional(field("attributes", $.attribute_list)),
+          optional("move"),
+          "fn",
+          $._fn_header,
+          field("body", $.block),
+        ),
+        prec.dynamic(-1, seq(optional(choice("move", "extern")), "fn", $._fn_header)),
       ),
 
     // -------------------------------------------------------------- struct/union/enum
@@ -690,6 +694,7 @@ module.exports = grammar({
 
     field_declaration: ($) =>
       seq(
+        optional(field("attributes", $.attribute_list)),
         optional("pub"),
         field("name", $.identifier),
         ":",
@@ -766,6 +771,7 @@ module.exports = grammar({
     // ends with a mandatory `;`, same as any other decl-shaped interface member.
     interface_method: ($) =>
       seq(
+        optional(field("attributes", $.attribute_list)),
         optional("pub"),
         "const",
         field("name", $.identifier),

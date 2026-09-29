@@ -23,6 +23,10 @@
 ; Functions
 (call_expression function: (identifier) @function)
 (builtin_identifier) @function.builtin
+
+; `@[name(args)]` attribute lists
+(attribute name: (identifier) @attribute)
+"@[" @punctuation.special
 (decl_statement name: (identifier) @function
   value: (function_expression))
 (function_expression) @function
@@ -118,7 +122,6 @@
   "volatile"
   "mut"
   "move"
-  "naked"
   "packed"
   "test"
   "weak"
