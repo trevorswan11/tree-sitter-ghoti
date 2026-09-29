@@ -157,3 +157,38 @@ const f := fn(c: bool): i32 {
                   (integer_literal))))))
         (return_statement
           (integer_literal))))))
+
+==================
+Visibility attribute on exported symbols
+==================
+
+@[visibility(.hidden)] export const helper := fn(): i32 { return 1; };
+@[visibility(.protected)] pub var counter: i32 = 0;
+
+---
+
+(source_file
+  (decl_statement
+    attributes: (attribute_list
+      (attribute
+        name: (identifier)
+        (arguments
+          (implicit_access_expression
+            member: (identifier)))))
+    (export_modifier)
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (integer_literal)))))
+  (decl_statement
+    attributes: (attribute_list
+      (attribute
+        name: (identifier)
+        (arguments
+          (implicit_access_expression
+            member: (identifier)))))
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal)))
