@@ -88,3 +88,32 @@ const t := 1;
   (decl_statement
     name: (identifier)
     value: (integer_literal)))
+
+==================
+A keyword is a name after a dot, as in @export's options
+==================
+
+@export(add, .{ .name = "__addtf3", .linkage = .weak });
+const t := x.type;
+
+---
+
+(source_file
+  (expression_statement
+    (builtin_call_expression
+      function: (builtin_identifier)
+      (arguments
+        (identifier)
+        (initializer_expression
+          (field_initializer
+            name: (identifier)
+            value: (string_literal))
+          (field_initializer
+            name: (identifier)
+            value: (implicit_access_expression
+              member: (identifier)))))))
+  (decl_statement
+    name: (identifier)
+    value: (dot_expression
+      object: (identifier)
+      member: (identifier))))

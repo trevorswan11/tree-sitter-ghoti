@@ -2977,6 +2977,213 @@
         ]
       }
     },
+    "_member_name": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "fn"
+              },
+              {
+                "type": "STRING",
+                "value": "var"
+              },
+              {
+                "type": "STRING",
+                "value": "const"
+              },
+              {
+                "type": "STRING",
+                "value": "constexpr"
+              },
+              {
+                "type": "STRING",
+                "value": "struct"
+              },
+              {
+                "type": "STRING",
+                "value": "enum"
+              },
+              {
+                "type": "STRING",
+                "value": "union"
+              },
+              {
+                "type": "STRING",
+                "value": "true"
+              },
+              {
+                "type": "STRING",
+                "value": "false"
+              },
+              {
+                "type": "STRING",
+                "value": "if"
+              },
+              {
+                "type": "STRING",
+                "value": "else"
+              },
+              {
+                "type": "STRING",
+                "value": "do"
+              },
+              {
+                "type": "STRING",
+                "value": "match"
+              },
+              {
+                "type": "STRING",
+                "value": "return"
+              },
+              {
+                "type": "STRING",
+                "value": "defer"
+              },
+              {
+                "type": "STRING",
+                "value": "errdefer"
+              },
+              {
+                "type": "STRING",
+                "value": "loop"
+              },
+              {
+                "type": "STRING",
+                "value": "for"
+              },
+              {
+                "type": "STRING",
+                "value": "while"
+              },
+              {
+                "type": "STRING",
+                "value": "continue"
+              },
+              {
+                "type": "STRING",
+                "value": "break"
+              },
+              {
+                "type": "STRING",
+                "value": "import"
+              },
+              {
+                "type": "STRING",
+                "value": "bool"
+              },
+              {
+                "type": "STRING",
+                "value": "void"
+              },
+              {
+                "type": "STRING",
+                "value": "type"
+              },
+              {
+                "type": "STRING",
+                "value": "auto"
+              },
+              {
+                "type": "STRING",
+                "value": "opaque"
+              },
+              {
+                "type": "STRING",
+                "value": "as"
+              },
+              {
+                "type": "STRING",
+                "value": "pub"
+              },
+              {
+                "type": "STRING",
+                "value": "extern"
+              },
+              {
+                "type": "STRING",
+                "value": "export"
+              },
+              {
+                "type": "STRING",
+                "value": "threadlocal"
+              },
+              {
+                "type": "STRING",
+                "value": "weak"
+              },
+              {
+                "type": "STRING",
+                "value": "callconv"
+              },
+              {
+                "type": "STRING",
+                "value": "volatile"
+              },
+              {
+                "type": "STRING",
+                "value": "mut"
+              },
+              {
+                "type": "STRING",
+                "value": "move"
+              },
+              {
+                "type": "STRING",
+                "value": "packed"
+              },
+              {
+                "type": "STRING",
+                "value": "noreturn"
+              },
+              {
+                "type": "STRING",
+                "value": "nullptr"
+              },
+              {
+                "type": "STRING",
+                "value": "test"
+              },
+              {
+                "type": "STRING",
+                "value": "impl"
+              },
+              {
+                "type": "STRING",
+                "value": "interface"
+              },
+              {
+                "type": "STRING",
+                "value": "dyn"
+              },
+              {
+                "type": "STRING",
+                "value": "asm"
+              },
+              {
+                "type": "STRING",
+                "value": "undefined"
+              },
+              {
+                "type": "STRING",
+                "value": "unreachable"
+              }
+            ]
+          },
+          "named": true,
+          "value": "identifier"
+        }
+      ]
+    },
     "builtin_call_expression": {
       "type": "SEQ",
       "members": [
@@ -3181,7 +3388,7 @@
             "name": "member",
             "content": {
               "type": "SYMBOL",
-              "name": "identifier"
+              "name": "_member_name"
             }
           }
         ]
@@ -3202,7 +3409,7 @@
             "name": "member",
             "content": {
               "type": "SYMBOL",
-              "name": "identifier"
+              "name": "_member_name"
             }
           }
         ]
@@ -3369,7 +3576,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "identifier"
+              "name": "_member_name"
             }
           },
           {

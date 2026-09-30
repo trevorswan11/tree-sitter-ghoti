@@ -544,6 +544,64 @@ module.exports = grammar({
         ),
       ),
 
+    // Right after `.` a keyword is a name: `.weak`, `x.type`
+    _member_name: ($) =>
+      choice(
+        $.identifier,
+        alias(
+          choice(
+            "fn",
+            "var",
+            "const",
+            "constexpr",
+            "struct",
+            "enum",
+            "union",
+            "true",
+            "false",
+            "if",
+            "else",
+            "do",
+            "match",
+            "return",
+            "defer",
+            "errdefer",
+            "loop",
+            "for",
+            "while",
+            "continue",
+            "break",
+            "import",
+            "bool",
+            "void",
+            "type",
+            "auto",
+            "opaque",
+            "as",
+            "pub",
+            "extern",
+            "export",
+            "threadlocal",
+            "weak",
+            "callconv",
+            "volatile",
+            "mut",
+            "move",
+            "packed",
+            "noreturn",
+            "nullptr",
+            "test",
+            "impl",
+            "interface",
+            "dyn",
+            "asm",
+            "undefined",
+            "unreachable",
+          ),
+          $.identifier,
+        ),
+      ),
+
     builtin_call_expression: ($) =>
       seq(field("function", alias(/@[A-Za-z_][A-Za-z0-9_]*/, $.builtin_identifier)), $.arguments),
 
@@ -560,9 +618,9 @@ module.exports = grammar({
       prec(PREC.CALL, seq(field("array", $._expression), "[", field("index", $._expression), "]")),
 
     dot_expression: ($) =>
-      prec(PREC.FIELD, seq(field("object", $._expression), ".", field("member", $.identifier))),
+      prec(PREC.FIELD, seq(field("object", $._expression), ".", field("member", $._member_name))),
 
-    implicit_access_expression: ($) => prec(PREC.FIELD, seq(".", field("member", $.identifier))),
+    implicit_access_expression: ($) => prec(PREC.FIELD, seq(".", field("member", $._member_name))),
 
     initializer_expression: ($) =>
       choice(
@@ -578,7 +636,7 @@ module.exports = grammar({
     // Precedence above PREC.FIELD so `.name =` shifts into a field initializer instead of
     // reducing `.name` as a standalone implicit_access_expression first.
     field_initializer: ($) =>
-      prec(PREC.FIELD + 1, seq(".", field("name", $.identifier), "=", field("value", $._expression))),
+      prec(PREC.FIELD + 1, seq(".", field("name", $._member_name), "=", field("value", $._expression))),
 
     array_expression: ($) =>
       seq(field("array_type", $.array_type), "{", sepBy(",", $._expression), optional(","), "}"),

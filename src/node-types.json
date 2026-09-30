@@ -9554,6 +9554,11 @@
     }
   },
   {
+    "type": "nullptr_literal",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "pack_expansion",
     "named": true,
     "fields": {
@@ -11268,6 +11273,11 @@
     }
   },
   {
+    "type": "undefined_literal",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "underscore",
     "named": true,
     "fields": {}
@@ -11302,6 +11312,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "unreachable_literal",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "unwrap_expression",
@@ -12391,8 +12406,8 @@
     "named": false
   },
   {
-    "type": "nullptr_literal",
-    "named": true
+    "type": "nullptr",
+    "named": false
   },
   {
     "type": "opaque",
@@ -12463,16 +12478,16 @@
     "named": false
   },
   {
-    "type": "undefined_literal",
-    "named": true
+    "type": "undefined",
+    "named": false
   },
   {
     "type": "union",
     "named": false
   },
   {
-    "type": "unreachable_literal",
-    "named": true
+    "type": "unreachable",
+    "named": false
   },
   {
     "type": "usize",
