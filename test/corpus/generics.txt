@@ -41,3 +41,30 @@ const S := struct {
               (dot_expression
                 object: (identifier)
                 member: (identifier)))))))))
+
+================================================================================
+@TypeOf takes several operands and names their peer type
+================================================================================
+
+const T := @TypeOf(a, b, c);
+var x: @TypeOf(a, b) = a;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (builtin_call_expression
+      function: (builtin_identifier)
+      (arguments
+        (identifier)
+        (identifier)
+        (identifier))))
+  (decl_statement
+    name: (identifier)
+    type: (builtin_call_expression
+      function: (builtin_identifier)
+      (arguments
+        (identifier)
+        (identifier)))
+    value: (identifier)))
