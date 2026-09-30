@@ -489,7 +489,17 @@ module.exports = grammar({
         ),
       ),
 
-    string_literal: (_) => token(seq('"', repeat(choice(/[^"\\]/, /\\./)), '"')),
+    // Escapes are their own nodes so highlighting can tell them apart from the text
+    string_literal: ($) =>
+      seq('"', repeat(choice($._string_content, $.escape_sequence)), token.immediate('"')),
+
+    _string_content: (_) => token.immediate(prec(1, /[^"\\\n]+/)),
+
+    // `\n`-style escapes, `\xHH` for one byte, and `\u{H...}` for a Unicode scalar value
+    escape_sequence: (_) =>
+      token.immediate(
+        seq("\\", choice(/[nrt\\'"0]/, /x[0-9A-Fa-f]{2}/, /u\{[0-9A-Fa-f]{1,6}\}/)),
+      ),
 
     // A `\\`-prefixed line, optionally continued by further `\\`-prefixed lines. Continuation
     // markers may be indented; the leading indentation and marker are not part of the value.
@@ -502,13 +512,36 @@ module.exports = grammar({
         ),
       ),
 
-    char_literal: (_) => token(seq("'", choice(/[^'\\]/, /\\./), "'")),
+    // One code point or one escape
+    char_literal: (_) =>
+      token(
+        seq(
+          "'",
+          choice(
+            /[^'\\\n\r]/,
+            seq("\\", choice(/[nrt\\'"0]/, /x[0-9A-Fa-f]{2}/, /u\{[0-9A-Fa-f]{1,6}\}/)),
+          ),
+          "'",
+        ),
+      ),
 
     // A bare word, or a raw identifier `@"..."` letting any text (including reserved keywords)
     // stand in for a name.
     identifier: (_) =>
       token(
-        choice(/[A-Za-z_][A-Za-z0-9_]*/, seq('@"', repeat(choice(/[^"\\\n\r]/, /\\./)), '"')),
+        choice(
+          /[A-Za-z_][A-Za-z0-9_]*/,
+          seq(
+            '@"',
+            repeat(
+              choice(
+                /[^"\\\n\r]/,
+                seq("\\", choice(/[nrt\\'"0]/, /x[0-9A-Fa-f]{2}/, /u\{[0-9A-Fa-f]{1,6}\}/)),
+              ),
+            ),
+            '"',
+          ),
+        ),
       ),
 
     builtin_call_expression: ($) =>

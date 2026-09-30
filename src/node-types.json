@@ -10994,6 +10994,21 @@
     }
   },
   {
+    "type": "string_literal",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "escape_sequence",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "struct_expression",
     "named": true,
     "fields": {},
@@ -11913,6 +11928,10 @@
     "named": false
   },
   {
+    "type": "\"",
+    "named": false
+  },
+  {
     "type": "%",
     "named": false
   },
@@ -12255,6 +12274,10 @@
     "named": false
   },
   {
+    "type": "escape_sequence",
+    "named": true
+  },
+  {
     "type": "export",
     "named": false
   },
@@ -12406,10 +12429,6 @@
   {
     "type": "stdcall",
     "named": false
-  },
-  {
-    "type": "string_literal",
-    "named": true
   },
   {
     "type": "struct",

@@ -5,6 +5,7 @@
 
 ; Literals
 (string_literal) @string
+(escape_sequence) @string.escape
 (multiline_string_literal) @string
 (char_literal) @string
 (integer_literal) @number

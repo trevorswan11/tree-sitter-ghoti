@@ -1,0 +1,90 @@
+==================
+String escapes are their own nodes
+==================
+
+const s := "caf\u{E9} \x41\n";
+const t := "plain";
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (string_literal
+      (escape_sequence)
+      (escape_sequence)
+      (escape_sequence)))
+  (decl_statement
+    name: (identifier)
+    value: (string_literal)))
+
+==================
+Character literals hold one code point or one escape
+==================
+
+const a := 'a';
+const b := 'é';
+const c := '😀';
+const d := '\u{1F600}';
+const e := '\xFF';
+const f := '\'';
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (char_literal))
+  (decl_statement
+    name: (identifier)
+    value: (char_literal))
+  (decl_statement
+    name: (identifier)
+    value: (char_literal))
+  (decl_statement
+    name: (identifier)
+    value: (char_literal))
+  (decl_statement
+    name: (identifier)
+    value: (char_literal))
+  (decl_statement
+    name: (identifier)
+    value: (char_literal)))
+
+==================
+Raw identifiers take any code point and escapes
+==================
+
+const @"😀" := @"caf\u{E9}";
+const @"👨‍👩‍👧" := 1;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (identifier))
+  (decl_statement
+    name: (identifier)
+    value: (integer_literal)))
+
+==================
+A malformed \u escape recovers as an error
+==================
+
+const s := "a\u{zz}b";
+const t := 1;
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (string_literal
+      (ERROR
+        (UNEXPECTED 'z')
+        (identifier)
+        (identifier))))
+  (decl_statement
+    name: (identifier)
+    value: (integer_literal)))

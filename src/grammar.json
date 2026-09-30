@@ -2752,33 +2752,73 @@
       }
     },
     "string_literal": {
-      "type": "TOKEN",
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_string_content"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "escape_sequence"
+              }
+            ]
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "\""
+          }
+        }
+      ]
+    },
+    "_string_content": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "PATTERN",
+          "value": "[^\"\\\\\\n]+"
+        }
+      }
+    },
+    "escape_sequence": {
+      "type": "IMMEDIATE_TOKEN",
       "content": {
         "type": "SEQ",
         "members": [
           {
             "type": "STRING",
-            "value": "\""
+            "value": "\\"
           },
           {
-            "type": "REPEAT",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": "[^\"\\\\]"
-                },
-                {
-                  "type": "PATTERN",
-                  "value": "\\\\."
-                }
-              ]
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "\""
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[nrt\\\\'\"0]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "x[0-9A-Fa-f]{2}"
+              },
+              {
+                "type": "PATTERN",
+                "value": "u\\{[0-9A-Fa-f]{1,6}\\}"
+              }
+            ]
           }
         ]
       }
@@ -2837,11 +2877,33 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "[^'\\\\]"
+                "value": "[^'\\\\\\n\\r]"
               },
               {
-                "type": "PATTERN",
-                "value": "\\\\."
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "\\"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[nrt\\\\'\"0]"
+                      },
+                      {
+                        "type": "PATTERN",
+                        "value": "x[0-9A-Fa-f]{2}"
+                      },
+                      {
+                        "type": "PATTERN",
+                        "value": "u\\{[0-9A-Fa-f]{1,6}\\}"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -2878,8 +2940,30 @@
                       "value": "[^\"\\\\\\n\\r]"
                     },
                     {
-                      "type": "PATTERN",
-                      "value": "\\\\."
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "\\"
+                        },
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "PATTERN",
+                              "value": "[nrt\\\\'\"0]"
+                            },
+                            {
+                              "type": "PATTERN",
+                              "value": "x[0-9A-Fa-f]{2}"
+                            },
+                            {
+                              "type": "PATTERN",
+                              "value": "u\\{[0-9A-Fa-f]{1,6}\\}"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
