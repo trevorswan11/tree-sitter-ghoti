@@ -136,12 +136,12 @@ module.exports = grammar({
         field("kind", choice("const", "let", seq("let", "mut"), seq("comptime", "let", "mut"))),
         field("name", $.identifier),
         optional(seq(":", field("type", $._type))),
-        optional(seq(choice(":=", "="), field("value", $._value))),
+        optional(seq("=", field("value", $._value))),
         ";",
       ),
 
     // A value slot that may also hold a type with no expression spelling, e.g.
-    // `const Bytes := []u8;`, `const Any := &dyn Writer;`, or `return [n]T;`. Where both readings
+    // `const Bytes = []u8;`, `const Any = &dyn Writer;`, or `return [n]T;`. Where both readings
     // parse (`^i32`), the expression wins.
     _value: ($) =>
       choice(
@@ -849,7 +849,7 @@ module.exports = grammar({
 
     // -------------------------------------------------------------- interfaces
 
-    // `const W := interface { ... }`: required methods, default methods, associated types,
+    // `const W = interface { ... }`: required methods, default methods, associated types,
     // and associated consts.
     interface_expression: ($) => seq("interface", "{", repeat($._interface_member), "}"),
 
@@ -865,7 +865,7 @@ module.exports = grammar({
         optional("pub"),
         "const",
         field("name", $.identifier),
-        ":=",
+        "=",
         "fn",
         $._fn_header,
         optional(field("body", $.block)),

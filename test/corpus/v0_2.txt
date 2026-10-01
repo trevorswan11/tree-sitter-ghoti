@@ -2,11 +2,11 @@
 Labeled loop / block as a value expression
 ==================
 
-const first := fn(): i32 {
+const first = fn(): i32 {
     return scan: loop { break :scan 1; };
 };
 
-const two := blk: {
+const two = blk: {
     break :blk 2;
 };
 
@@ -39,7 +39,7 @@ const two := blk: {
 Control-flow statements need no trailing semicolon
 ==================
 
-const f := fn(c: bool): void {
+const f = fn(c: bool): void {
     if (c) { return; }
     for (0..3) |_| { g(); }
     outer: loop { break :outer; }
@@ -85,11 +85,11 @@ const f := fn(c: bool): void {
 let mut and const static members of a struct
 ==================
 
-const Counter := struct {
+const Counter = struct {
     n: i32,
-    const LIMIT := 100;
+    const LIMIT = 100;
     let mut live: i32 = 0;
-    const tick := fn(^mut self): void { live += 1; };
+    const tick = fn(^mut self): void { live += 1; };
 };
 
 ---
@@ -123,7 +123,7 @@ const Counter := struct {
 Return with an implicit initializer
 ==================
 
-const make := fn(): Point {
+const make = fn(): Point {
     return .{ .x = 1, .y = 2 };
 };
 

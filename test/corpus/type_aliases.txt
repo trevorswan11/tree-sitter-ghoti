@@ -2,14 +2,14 @@
 Type aliases are const declarations
 ==================
 
-const Byte := u8;
-pub const Handle := ^mut opaque;
-const Kind := type;
-const Never := noreturn;
-const Bytes := []u8;
-const Pair := [2]i32;
-const Callback := ^fn(status: i32) callconv(.win64): void;
-const NewRes := Result(T, NewErr);
+const Byte = u8;
+pub const Handle = ^mut opaque;
+const Kind = type;
+const Never = noreturn;
+const Bytes = []u8;
+const Pair = [2]i32;
+const Callback = ^fn(status: i32) callconv(.win64): void;
+const NewRes = Result(T, NewErr);
 
 ---
 
@@ -59,8 +59,8 @@ const NewRes := Result(T, NewErr);
 dyn interface aliases in value position
 ==================
 
-const Any := &dyn Writer;
-const AnyMut := ^mut dyn io.Writer(Error = u8);
+const Any = &dyn Writer;
+const AnyMut = ^mut dyn io.Writer(Error = u8);
 
 ---
 
@@ -87,7 +87,7 @@ const AnyMut := ^mut dyn io.Writer(Error = u8);
 Array literals still take precedence over a type-valued array
 ==================
 
-const a := [3]i32{ 1, 2, 3 };
+const a = [3]i32{ 1, 2, 3 };
 
 ---
 
@@ -106,7 +106,7 @@ const a := [3]i32{ 1, 2, 3 };
 using is an ordinary identifier
 ==================
 
-const using := 3;
+const using = 3;
 
 ---
 

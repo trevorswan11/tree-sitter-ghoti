@@ -5,7 +5,7 @@ Declaration modifiers: weak, threadlocal, extern/export link-name overrides
 weak let mut counter: i32 = 0;
 threadlocal let mut tls_slot: i32 = 0;
 extern("libc", "malloc") const raw_malloc: fn(size: usize): ^u8;
-export("ghoti_entry") const entry := fn(): void {};
+export("ghoti_entry") const entry = fn(): void {};
 pub weak extern("m") const libm_sin: fn(x: f64): f64;
 
 ---
@@ -51,20 +51,20 @@ pub weak extern("m") const libm_sin: fn(x: f64): f64;
 Interface declaration with required/default methods, associated type and const
 ==================
 
-pub const Writer := interface {
+pub const Writer = interface {
     Error: type;
     const preferred_chunk: usize = 4096;
 
-    pub const write := fn(&mut self, bytes: []u8): i32;
+    pub const write = fn(&mut self, bytes: []u8): i32;
 
-    pub const writeAll := fn(&mut self, bytes: []u8): i32 {
+    pub const writeAll = fn(&mut self, bytes: []u8): i32 {
         return 0;
     };
 
-    const debugName := fn(&self): []u8;
+    const debugName = fn(&self): []u8;
 };
 
-const Marker := interface {};
+const Marker = interface {};
 
 ---
 
@@ -111,28 +111,28 @@ Trait impl, inherent impl, and parameterized impl blocks
 ==================
 
 impl Writer for File {
-    const Error := os.Error;
-    const preferred_chunk := 8192;
+    const Error = os.Error;
+    const preferred_chunk = 8192;
 
-    pub const write := fn(&mut self, bytes: []u8): i32 {
+    pub const write = fn(&mut self, bytes: []u8): i32 {
         return 0;
     };
 }
 
 impl FdWriter {
-    pub const fromRaw := fn(fd: i32): @this() {
+    pub const fromRaw = fn(fd: i32): @this() {
         return .{ .fd = fd };
     };
 }
 
 impl(H: type) Writer(H) {
-    pub const fromRaw := fn(raw: H): @this() {
+    pub const fromRaw = fn(raw: H): @this() {
         return .{ .handle = raw };
     };
 }
 
 impl(T: type, comptime n: usize) Debug for Box(T, n) {
-    pub const fmt := fn(&self): i32 {
+    pub const fmt = fn(&self): i32 {
         return 0;
     };
 }
@@ -235,11 +235,11 @@ impl(T: type, comptime n: usize) Debug for Box(T, n) {
 impl Trait parameter sugar and intersection bounds
 ==================
 
-pub const dump := fn(w: &mut impl Writer, msg: []u8): i32 {
+pub const dump = fn(w: &mut impl Writer, msg: []u8): i32 {
     return 0;
 };
 
-pub const tee := fn(x: &mut impl (Reader + Writer)): i32 {
+pub const tee = fn(x: &mut impl (Reader + Writer)): i32 {
     return 0;
 };
 
@@ -337,8 +337,8 @@ let mut mp: &dyn Map(Key = []u8, Value = i32) = undefined;
 callconv on a bodyless fn value and a defined function
 ==================
 
-const winfn := fn(x: i32) callconv(.win64): i32;
-const sysv_add := fn(a: i32, b: i32) callconv(.sysv): i32 {
+const winfn = fn(x: i32) callconv(.win64): i32;
+const sysv_add = fn(a: i32, b: i32) callconv(.sysv): i32 {
     return a + b;
 };
 
@@ -376,11 +376,11 @@ const sysv_add := fn(a: i32, b: i32) callconv(.sysv): i32 {
 Open-ended ranges
 ==================
 
-const full_slice := arr[..];
-const upto := arr[..arr.len];
-const upto_incl := arr[..=arr.len];
-const from_lower := arr[lower..];
-const both := arr[lower..upper];
+const full_slice = arr[..];
+const upto = arr[..arr.len];
+const upto_incl = arr[..=arr.len];
+const from_lower = arr[lower..];
+const both = arr[lower..upper];
 
 ---
 
@@ -468,7 +468,7 @@ let mut cf: comptime_float = 0.0;
 match comptime
 ==================
 
-const pick := fn(T: type): i32 {
+const pick = fn(T: type): i32 {
     return match comptime (T) {
         i32 => 1,
         _ => 0,
@@ -500,9 +500,9 @@ const pick := fn(T: type): i32 {
 Postfix unwrap operators
 ==================
 
-const maybe_ok := fn(): i32 {
-    let v := try_thing()?;
-    let w := try_thing()!;
+const maybe_ok = fn(): i32 {
+    let v = try_thing()?;
+    let w = try_thing()!;
     return v + w;
 };
 
@@ -535,7 +535,7 @@ const maybe_ok := fn(): i32 {
 Inline assembly expression
 ==================
 
-const syscall_write := fn(fd: i32, buf: ^u8, len: usize): i32 {
+const syscall_write = fn(fd: i32, buf: ^u8, len: usize): i32 {
     return asm i32 {
         template: "syscall",
         outputs: ("={rax}" = _),
@@ -593,8 +593,8 @@ const syscall_write := fn(fd: i32, buf: ^u8, len: usize): i32 {
 Positional aggregate literals
 ==================
 
-const p := Point{ 1, 2 };
-const q := .{ 3, 4 };
+const p = Point{ 1, 2 };
+const q = .{ 3, 4 };
 
 ---
 
@@ -619,9 +619,9 @@ struct {
     @cfg(target_os == "linux") a: i32 else b: i32,
 
     @cfg(target_os == "linux") {
-        const linux_only := fn(): void {};
+        const linux_only = fn(): void {};
     } else {
-        const fallback_only := fn(): void {};
+        const fallback_only = fn(): void {};
     }
 };
 
@@ -661,7 +661,7 @@ struct {
 @cfg statement with else-if chain
 ==================
 
-const cfg_stmt_example := fn(): void {
+const cfg_stmt_example = fn(): void {
     @cfg(debug) {
         let mut x: i32 = 1;
     } else @cfg(release) {
@@ -708,12 +708,12 @@ const cfg_stmt_example := fn(): void {
 Wrapping arithmetic and shift operators
 ==================
 
-const a := x +% y;
-const b := x -% y;
-const c := x *% y;
-const d := x <<% y;
+const a = x +% y;
+const b = x -% y;
+const c = x *% y;
+const d = x <<% y;
 
-const wrap := fn(n: i32): void {
+const wrap = fn(n: i32): void {
   n +%= 1;
   n -%= 1;
   n *%= 2;
@@ -772,12 +772,12 @@ const wrap := fn(n: i32): void {
 Saturating arithmetic and shift operators
 ==================
 
-const a := x +| y;
-const b := x -| y;
-const c := x *| y;
-const d := x <<| y;
+const a = x +| y;
+const b = x -| y;
+const c = x *| y;
+const d = x <<| y;
 
-const sat := fn(n: i32): void {
+const sat = fn(n: i32): void {
   n +|= 1;
   n -|= 1;
   n *|= 2;

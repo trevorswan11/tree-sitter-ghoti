@@ -3,7 +3,7 @@ Attribute list on a declaration
 ==================
 
 /// Closes the file.
-@[discardable] pub const close := fn(): i32 { return 0; };
+@[discardable] pub const close = fn(): i32 { return 0; };
 
 ---
 
@@ -25,7 +25,7 @@ Attribute list with arguments and a trailing comma
 ==================
 
 @[inline(.always), align(16), deprecated("use newer"),]
-const f := fn(): void {};
+const f = fn(): void {};
 
 ---
 
@@ -54,8 +54,8 @@ const f := fn(): void {};
 Attribute list on a function literal and fields
 ==================
 
-const stub := @[naked] fn(): void {};
-const S := struct { @[align(8)] a: u8, @[deprecated] pub b: u8 };
+const stub = @[naked] fn(): void {};
+const S = struct { @[align(8)] a: u8, @[deprecated] pub b: u8 };
 
 ---
 
@@ -90,8 +90,8 @@ const S := struct { @[align(8)] a: u8, @[deprecated] pub b: u8 };
 Attribute list on an interface method
 ==================
 
-const Closer := interface {
-    @[discardable] pub const close := fn(&self): i32;
+const Closer = interface {
+    @[discardable] pub const close = fn(&self): i32;
 };
 
 ---
@@ -112,7 +112,7 @@ const Closer := interface {
 Branch hints and scoped safety are builtin calls
 ==================
 
-const f := fn(c: bool): i32 {
+const f = fn(c: bool): i32 {
     @setRuntimeSafety(@optimizeMode() == .debug);
     if (c) {
         @branchHint(.likely);
@@ -162,7 +162,7 @@ const f := fn(c: bool): i32 {
 Visibility attribute on exported symbols
 ==================
 
-@[visibility(.hidden)] export const helper := fn(): i32 { return 1; };
+@[visibility(.hidden)] export const helper = fn(): i32 { return 1; };
 @[visibility(.protected)] pub let mut counter: i32 = 0;
 
 ---

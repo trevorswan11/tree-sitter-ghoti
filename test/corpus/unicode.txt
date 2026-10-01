@@ -2,8 +2,8 @@
 String escapes are their own nodes
 ==================
 
-const s := "caf\u{E9} \x41\n";
-const t := "plain";
+const s = "caf\u{E9} \x41\n";
+const t = "plain";
 
 ---
 
@@ -22,12 +22,12 @@ const t := "plain";
 Character literals hold one code point or one escape
 ==================
 
-const a := 'a';
-const b := 'é';
-const c := '😀';
-const d := '\u{1F600}';
-const e := '\xFF';
-const f := '\'';
+const a = 'a';
+const b = 'é';
+const c = '😀';
+const d = '\u{1F600}';
+const e = '\xFF';
+const f = '\'';
 
 ---
 
@@ -55,8 +55,8 @@ const f := '\'';
 Raw identifiers take any code point and escapes
 ==================
 
-const @"😀" := @"caf\u{E9}";
-const @"👨‍👩‍👧" := 1;
+const @"😀" = @"caf\u{E9}";
+const @"👨‍👩‍👧" = 1;
 
 ---
 
@@ -72,8 +72,8 @@ const @"👨‍👩‍👧" := 1;
 A malformed \u escape recovers as an error
 ==================
 
-const s := "a\u{zz}b";
-const t := 1;
+const s = "a\u{zz}b";
+const t = 1;
 
 ---
 
@@ -94,7 +94,7 @@ A keyword is a name after a dot, as in @export's options
 ==================
 
 @export(add, .{ .name = "__addtf3", .linkage = .weak });
-const t := x.type;
+const t = x.type;
 
 ---
 

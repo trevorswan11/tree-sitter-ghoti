@@ -2,14 +2,14 @@
 Hexadecimal float literals
 ==================
 
-const a := 0x1.8p3;
-const b := 0X1P-4;
-const c := 0xA.8;
-const d := 0x1.8p3f32;
-const e := 0xF_F.8_0p1_0;
-const f := 0xff;
-const g := 0x1..2;
-const h := 0x1.len;
+const a = 0x1.8p3;
+const b = 0X1P-4;
+const c = 0xA.8;
+const d = 0x1.8p3f32;
+const e = 0xF_F.8_0p1_0;
+const f = 0xff;
+const g = 0x1..2;
+const h = 0x1.len;
 
 ---
 

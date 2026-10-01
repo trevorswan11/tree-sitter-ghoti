@@ -2,13 +2,13 @@
 Binding forms: const, let, let mut, comptime let mut
 ==================
 
-const N := 16;
+const N = 16;
 let base: i32 = 10;
 pub let mut counter: u64 = 0;
 export("ghoti_limit") let limit: u64 = 8;
-pub weak const hook := fn(): i32 { return 1; };
-const f := fn(): void {
-    let x := base + 2;
+pub weak const hook = fn(): i32 { return 1; };
+const f = fn(): void {
+    let x = base + 2;
     comptime let mut cursor: usize = 0;
 };
 
@@ -58,7 +58,7 @@ const f := fn(): void {
 comptime parameters, headers, and loops
 ==================
 
-const f := fn(comptime n: usize, rest...): void {
+const f = fn(comptime n: usize, rest...): void {
     if comptime (n > 4) {}
     for comptime (rest) |r| {}
     while comptime (n < 2) {}
@@ -129,11 +129,11 @@ impl(comptime N: usize) Box(N) {}
 comptime blocks, labels, and expressions
 ==================
 
-const f := fn(): i32 {
+const f = fn(): i32 {
     comptime { check(); }
-    let v := comptime name: { break :name 3; };
-    let a := comptime twice(21) + x;
-    let b := comptime (1 + 2) * 3;
+    let v = comptime name: { break :name 3; };
+    let a = comptime twice(21) + x;
+    let b = comptime (1 + 2) * 3;
     comptime validate(fmt);
     return if comptime 1 else 2;
 };

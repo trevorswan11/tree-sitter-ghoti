@@ -1,4 +1,4 @@
-pub const main := fn(): i32 { // trailing on brace
+pub const main = fn(): i32 { // trailing on brace
     // comment before decl
     let mut sum: i32 = 0; // trailing
     for (0..3) |v| { // comment in for header

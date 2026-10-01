@@ -10,7 +10,7 @@ const @"var": i32 = 1;
 const @"weird name": i32 = 2;
 
 // errdefer with and without a capture.
-const open_two := fn(): i32 {
+const open_two = fn(): i32 {
     errdefer cleanup();
     errdefer |err| logErr(err);
     errdefer |^err| logErr(err);
@@ -24,9 +24,9 @@ comptime let mut counter: i32 = 0;
 comptime let mut other: i32 = 0;
 
 // for comptime / while comptime.
-const unroll := fn(): void {
+const unroll = fn(): void {
     for comptime (0..4) |i| {
-        let x := i;
+        let x = i;
     }
     while comptime (counter < 4) {
         counter += 1;
@@ -34,22 +34,22 @@ const unroll := fn(): void {
 };
 
 // callconv on a function type value, not just a declaration.
-const Handler := fn(x: i32) callconv(.c): i32;
+const Handler = fn(x: i32) callconv(.c): i32;
 
 // Parameter packs: untyped, bound, and comptime params.
-const sum := fn(rest...): i32 {
+const sum = fn(rest...): i32 {
     return total(rest...);
 };
 
-const bounded := fn(rest: impl Writer...): i32 {
+const bounded = fn(rest: impl Writer...): i32 {
     return 0;
 };
 
-const scaled := fn(comptime n: usize, xs: []i32): i32 {
+const scaled = fn(comptime n: usize, xs: []i32): i32 {
     return n;
 };
 
 // Pack forwarding in call arguments, mixed with normal args.
-const forward := fn(pre: i32, rest...): i32 {
+const forward = fn(pre: i32, rest...): i32 {
     return combine(pre, rest..., 0);
 };

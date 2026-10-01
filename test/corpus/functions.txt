@@ -2,7 +2,7 @@
 extern fn types are thin C-ABI function pointers
 ==================
 
-const Thin := extern fn(a: i32) callconv(.c): i32;
+const Thin = extern fn(a: i32) callconv(.c): i32;
 let mut cb: extern fn(a: i32): i32 = undefined;
 
 ---
@@ -59,8 +59,8 @@ let mut maybe: ^fn(a: i32): i32 = nullptr;
 dyn Fn sugar in value, reference, and pointer positions
 ==================
 
-const Op := dyn Fn(n: i32): i32;
-const use := fn(f: &dyn Fn(n: i32): i32, g: ^dyn Fn(): void): i32 { return f(1); };
+const Op = dyn Fn(n: i32): i32;
+const use = fn(f: &dyn Fn(n: i32): i32, g: ^dyn Fn(): void): i32 { return f(1); };
 
 ---
 
@@ -103,7 +103,7 @@ const use := fn(f: &dyn Fn(n: i32): i32, g: ^dyn Fn(): void): i32 { return f(1);
 A user interface named Fn still reads as a dyn type
 ==================
 
-const read := fn(x: &dyn Fn(Out = i32)): i32 { return x.get(); };
+const read = fn(x: &dyn Fn(Out = i32)): i32 { return x.get(); };
 
 ---
 
@@ -133,7 +133,7 @@ const read := fn(x: &dyn Fn(Out = i32)): i32 { return x.get(); };
 A bare dyn type is aliased without indirection
 ==================
 
-const Bound := dyn Sink(Out = i32);
+const Bound = dyn Sink(Out = i32);
 
 ---
 
@@ -151,7 +151,7 @@ const Bound := dyn Sink(Out = i32);
 A fn type as a function literal's return type before its body
 ==================
 
-const pick := fn(): fn(n: i32): i32 { return inc; };
+const pick = fn(): fn(n: i32): i32 { return inc; };
 
 ---
 
@@ -172,7 +172,7 @@ const pick := fn(): fn(n: i32): i32 { return inc; };
 A call result is called directly
 ==================
 
-const chained := fn(): i32 { return make()()(1); };
+const chained = fn(): i32 { return make()()(1); };
 
 ---
 
@@ -196,7 +196,7 @@ const chained := fn(): i32 { return make()()(1); };
 if comptime without a condition branches on the evaluation context
 ==================
 
-const where := fn(): i32 {
+const where = fn(): i32 {
     if comptime { n += 5; }
     return if comptime 1 else 2;
 };
@@ -226,7 +226,7 @@ const where := fn(): i32 {
 if comptime with a parenthesized condition keeps its condition
 ==================
 
-const pick := fn(): i32 { return if comptime (n > 1) n else 0; };
+const pick = fn(): i32 { return if comptime (n > 1) n else 0; };
 
 ---
 

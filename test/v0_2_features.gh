@@ -1,6 +1,6 @@
 // New builtins are just more `@call(...)` forms.
-const type_name := @typeName(i32);
-const parent := @fieldParentPtr(Node, "link", link_ptr);
+const type_name = @typeName(i32);
+const parent = @fieldParentPtr(Node, "link", link_ptr);
 
 // Module-scope `let mut` globals, including aggregate initializers.
 let mut request_count: usize = 0uz;
@@ -8,30 +8,30 @@ let mut anchor: Point = Point{ .x = 40, .y = 2 };
 let mut grid: [3uz]mut i32 = [3uz]mut i32{7, 8, 9};
 
 // `const`, `let mut`, and function static members in every structural kind.
-const Counter := struct {
+const Counter = struct {
     n: i32,
 
-    const LIMIT := 100;
+    const LIMIT = 100;
     let mut live: i32 = 0;
 
-    const init := fn(): @this() { return .{ .n = 0 }; };
-    const tick := fn(^mut self): void {
+    const init = fn(): @this() { return .{ .n = 0 }; };
+    const tick = fn(^mut self): void {
         live += 1;                 // bare sibling static member
         request_count += 1uz;      // module-scope let mut
         self.n += 1;
     };
 };
 
-const Status := enum {
+const Status = enum {
     ok, not_found, err,
 
-    const DEFAULT_CODE := 200;
+    const DEFAULT_CODE = 200;
     let mut seen: i32 = 0;
 
-    const from_code := fn(c: i32): i32 { seen += 1; return c; };
+    const from_code = fn(c: i32): i32 { seen += 1; return c; };
 };
 
-const Slot := union {
+const Slot = union {
     empty: void,
     used: i32,
 
@@ -39,13 +39,13 @@ const Slot := union {
 };
 
 // Unbound method reference: `self` becomes an explicit first parameter.
-const bump_ref := Counter.tick;
+const bump_ref = Counter.tick;
 
 // A control-flow statement body needs no trailing `;`.
-const drive := fn(c: ^mut Counter): void {
+const drive = fn(c: ^mut Counter): void {
     if (c.n < 10) { c.tick(); }
     for (0..3) |_| { c.tick(); }
-    let mut g := 0;
+    let mut g = 0;
     outer: loop {
         g += 1;
         if (g == 5) { break :outer; }
@@ -53,12 +53,12 @@ const drive := fn(c: ^mut Counter): void {
 };
 
 // Return-position implicit initializers.
-const make_point := fn(hi: bool): Point {
+const make_point = fn(hi: bool): Point {
     return if (hi) .{ .x = 30, .y = 12 }; else .{ .x = 1, .y = 1 };
 };
 
 // A labeled loop used as a value.
-const first_hit := fn(): i32 {
+const first_hit = fn(): i32 {
     let mut i: i32 = 0;
     return scan: loop {
         i += 1;
@@ -67,13 +67,13 @@ const first_hit := fn(): i32 {
 };
 
 // A labeled block used as a value.
-const two := blk: {
-    let a := 1;
+const two = blk: {
+    let a = 1;
     break :blk a + 1;
 };
 
-pub const main := fn(): i32 {
-    let mut c := Counter.init();
+pub const main = fn(): i32 {
+    let mut c = Counter.init();
     bump_ref(^mut c);
     return c.n + two + Status.seen + @as(i32, Slot.allocations);
 };

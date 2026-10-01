@@ -1,27 +1,27 @@
 //! Syntax introduced in v0.4.0-alpha.2: attribute lists, build modes, branch hints.
 
 /// Closes the handle; the error is usually ignorable.
-@[discardable] pub const close := fn(): i32 { return 0; };
+@[discardable] pub const close = fn(): i32 { return 0; };
 
 @[inline(if (@optimizeMode() == .debug) .never else .always), align(32),]
-const hot := fn(x: i32): i32 { return x * 2; };
+const hot = fn(x: i32): i32 { return x * 2; };
 
 @[deprecated("use `hot`")]
-const warm := fn(x: i32): i32 { return hot(x); };
+const warm = fn(x: i32): i32 { return hot(x); };
 
-const trampoline := @[naked] fn(): void {};
+const trampoline = @[naked] fn(): void {};
 
-const Packet := struct {
+const Packet = struct {
     tag: u8,
     @[align(16)] payload: [16]u8,
     @[deprecated("use payload")] pub legacy: u8,
 };
 
-const Closer := interface {
-    @[discardable] pub const close := fn(&self): i32;
+const Closer = interface {
+    @[discardable] pub const close = fn(&self): i32;
 };
 
-const pick := fn(c: bool): i32 {
+const pick = fn(c: bool): i32 {
     @setRuntimeSafety(@runtimeSafety());
     if (c) {
         @branchHint(.likely);
@@ -33,16 +33,16 @@ const pick := fn(c: bool): i32 {
 };
 
 // Declaration forms: compile-time `const`, runtime `let` / `let mut`, compile-time-mutable `comptime let mut`.
-const N := 16;
+const N = 16;
 pub let mut hits: u64 = 0;
 export("ghoti_limit") let limit: u64 = 8;
 
-const twice := fn(v: i32): i32 { return v * 2; };
+const twice = fn(v: i32): i32 { return v * 2; };
 
-const scale := fn(comptime k: i32, x: i32): i32 {
+const scale = fn(comptime k: i32, x: i32): i32 {
     comptime let mut acc: i32 = 0;
     for comptime (0..4) |i| { acc += i; }
-    let base := comptime twice(21) + x;
+    let base = comptime twice(21) + x;
     comptime check();
     loop comptime { break; }
     return base * k + acc;
