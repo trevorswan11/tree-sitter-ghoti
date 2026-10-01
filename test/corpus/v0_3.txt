@@ -2,8 +2,8 @@
 Declaration modifiers: weak, threadlocal, extern/export link-name overrides
 ==================
 
-weak var counter: i32 = 0;
-threadlocal var tls_slot: i32 = 0;
+weak let mut counter: i32 = 0;
+threadlocal let mut tls_slot: i32 = 0;
 extern("libc", "malloc") const raw_malloc: fn(size: usize): ^u8;
 export("ghoti_entry") const entry := fn(): void {};
 pub weak extern("m") const libm_sin: fn(x: f64): f64;
@@ -131,7 +131,7 @@ impl(H: type) Writer(H) {
     };
 }
 
-impl(T: type, constexpr n: usize) Debug for Box(T, n) {
+impl(T: type, comptime n: usize) Debug for Box(T, n) {
     pub const fmt := fn(&self): i32 {
         return 0;
     };
@@ -280,11 +280,11 @@ pub const tee := fn(x: &mut impl (Reader + Writer)): i32 {
 dyn types with associated-type bindings
 ==================
 
-var wr: &dyn Writer = undefined;
-var wrp: ^dyn Writer = undefined;
-var wrm: &mut dyn Writer = undefined;
-var it: &dyn Iterator(Item = u8) = undefined;
-var mp: &dyn Map(Key = []u8, Value = i32) = undefined;
+let mut wr: &dyn Writer = undefined;
+let mut wrp: ^dyn Writer = undefined;
+let mut wrm: &mut dyn Writer = undefined;
+let mut it: &dyn Iterator(Item = u8) = undefined;
+let mut mp: &dyn Map(Key = []u8, Value = i32) = undefined;
 
 ---
 
@@ -424,13 +424,13 @@ const both := arr[lower..upper];
 Arbitrary-width integers and half/quad/f80 floats
 ==================
 
-var narrow: u3 = 0;
-var wide: i3343 = 0;
-var half: f16 = 0.0;
-var quad: f128 = 0.0;
-var extended: f80 = 0.0;
-var ci: constexpr_int = 0;
-var cf: constexpr_float = 0.0;
+let mut narrow: u3 = 0;
+let mut wide: i3343 = 0;
+let mut half: f16 = 0.0;
+let mut quad: f128 = 0.0;
+let mut extended: f80 = 0.0;
+let mut ci: comptime_int = 0;
+let mut cf: comptime_float = 0.0;
 
 ---
 
@@ -465,11 +465,11 @@ var cf: constexpr_float = 0.0;
     value: (float_literal)))
 
 ==================
-match constexpr
+match comptime
 ==================
 
 const pick := fn(T: type): i32 {
-    return match constexpr (T) {
+    return match comptime (T) {
         i32 => 1,
         _ => 0,
     };
@@ -501,8 +501,8 @@ Postfix unwrap operators
 ==================
 
 const maybe_ok := fn(): i32 {
-    const v := try_thing()?;
-    const w := try_thing()!;
+    let v := try_thing()?;
+    let w := try_thing()!;
     return v + w;
 };
 
@@ -663,11 +663,11 @@ struct {
 
 const cfg_stmt_example := fn(): void {
     @cfg(debug) {
-        var x: i32 = 1;
+        let mut x: i32 = 1;
     } else @cfg(release) {
-        var x: i32 = 2;
+        let mut x: i32 = 2;
     } else {
-        var x: i32 = 3;
+        let mut x: i32 = 3;
     }
 };
 

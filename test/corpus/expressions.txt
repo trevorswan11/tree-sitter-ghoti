@@ -96,7 +96,7 @@ const f := fn(e: E): Error {
 returning a type value
 ==================
 
-const Array := fn(T: type, constexpr n: usize): type {
+const Array := fn(T: type, comptime n: usize): type {
     return [n]T;
 };
 

@@ -44,7 +44,6 @@ module.exports = grammar({
     [$.dyn_type, $.dyn_function_type, $._expression],
     [$.parenthesized_expression, $.if_expression],
     [$.parameter],
-    [$.constexpr_expression, $._expression],
   ],
 
   rules: {
@@ -133,11 +132,8 @@ module.exports = grammar({
       seq(
         optional(field("attributes", $.attribute_list)),
         repeat($._decl_modifier),
-        // `constexpr var` (either order) is the one legal pairing: a compile-time-mutable local.
-        field(
-          "kind",
-          choice("var", "const", "constexpr", seq("constexpr", "var"), seq("var", "constexpr")),
-        ),
+        // `comptime let mut` is the one compile-time-mutable form, and only a local
+        field("kind", choice("const", "let", seq("let", "mut"), seq("comptime", "let", "mut"))),
         field("name", $.identifier),
         optional(seq(":", field("type", $._type))),
         optional(seq(choice(":=", "="), field("value", $._value))),
@@ -209,7 +205,7 @@ module.exports = grammar({
     impl_parameters: ($) => seq("(", sepBy(",", $.impl_parameter), optional(","), ")"),
 
     impl_parameter: ($) =>
-      seq(optional("constexpr"), field("name", $.identifier), ":", field("type", $._type)),
+      seq(optional("comptime"), field("name", $.identifier), ":", field("type", $._type)),
 
     impl_body: ($) => seq("{", repeat($._member), "}"),
 
@@ -225,7 +221,7 @@ module.exports = grammar({
         $.do_while_expression,
         $.loop_expression,
         $.labeled_expression,
-        $.constexpr_expression,
+        $.comptime_expression,
         $.block,
       ),
 
@@ -249,7 +245,7 @@ module.exports = grammar({
         $.enum_expression,
         $.interface_expression,
         $.builtin_call_expression, // e.g. @this()
-        $.modified_type, // bare `mut`/`volatile` prefix, e.g. `var v: mut volatile i32;`
+        $.modified_type, // bare `mut`/`volatile` prefix, e.g. `let mut v: mut volatile i32;`
       ),
 
     // Recursive so `mut volatile T` is just two nested modified_types
@@ -329,8 +325,8 @@ module.exports = grammar({
         "f64",
         "f80",
         "f128",
-        "constexpr_int",
-        "constexpr_float",
+        "comptime_int",
+        "comptime_float",
         "bool",
         "void",
         "type",
@@ -385,18 +381,21 @@ module.exports = grammar({
         $.do_while_expression,
         $.loop_expression,
         $.labeled_expression,
-        $.constexpr_expression,
+        $.comptime_expression,
         $.block,
         $.parenthesized_expression,
       ),
 
-    // `constexpr { ... }` / `constexpr label: { ... }`: a compile-time-evaluated block usable as
-    // a statement or, labeled, as a `break`-able value expression.
-    constexpr_expression: ($) =>
-      seq(
-        "constexpr",
-        optional(seq(field("label", $.identifier), ":")),
-        field("body", $.block),
+    // `comptime { ... }` / `comptime label: { ... }`: a compile-time-evaluated block usable as
+    // a statement or, labeled, as a `break`-able value expression. `comptime <expr>` forces one
+    // expression to be evaluated at compile time and binds like a prefix operator.
+    comptime_expression: ($) =>
+      choice(
+        prec(
+          PREC.FIELD + 1,
+          seq("comptime", optional(seq(field("label", $.identifier), ":")), field("body", $.block)),
+        ),
+        prec(PREC.UNARY, seq("comptime", field("operand", $._expression))),
       ),
 
     // `@cfgValue(pred => val, ..., _ => fallback)`: the guard-arm form. The plain single-argument
@@ -551,9 +550,9 @@ module.exports = grammar({
         alias(
           choice(
             "fn",
-            "var",
+            "let",
             "const",
-            "constexpr",
+            "comptime",
             "struct",
             "enum",
             "union",
@@ -729,10 +728,10 @@ module.exports = grammar({
     self_parameter: ($) =>
       seq(optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))), choice("self", "this")),
 
-    // `x: T`, an untyped pack `rest...`, a bound pack `rest: impl I...`, or `constexpr n: T`.
+    // `x: T`, an untyped pack `rest...`, a bound pack `rest: impl I...`, or `comptime n: T`.
     parameter: ($) =>
       seq(
-        optional("constexpr"),
+        optional("comptime"),
         field("name", $.identifier),
         choice(
           seq(":", field("type", $._type), optional(prec.dynamic(1, field("pack", "...")))),
@@ -924,7 +923,7 @@ module.exports = grammar({
         prec.right(
           seq(
             "if",
-            optional("constexpr"),
+            optional("comptime"),
             "(",
             field("condition", $._expression),
             ")",
@@ -932,14 +931,14 @@ module.exports = grammar({
             optional(seq("else", field("alternate", $._if_branch))),
           ),
         ),
-        // `if constexpr a else b`: `a` under compile-time evaluation, `b` at runtime. A `(`
-        // right after `constexpr` always starts a condition instead.
+        // `if comptime a else b`: `a` under compile-time evaluation, `b` at runtime. A `(`
+        // right after `comptime` always starts a condition instead.
         prec.right(
           prec.dynamic(
             -1,
             seq(
               "if",
-              "constexpr",
+              "comptime",
               field("consequence", $._if_branch),
               optional(seq("else", field("alternate", $._if_branch))),
             ),
@@ -1012,7 +1011,7 @@ module.exports = grammar({
     match_expression: ($) =>
       seq(
         "match",
-        optional("constexpr"),
+        optional("comptime"),
         "(",
         field("matcher", $._expression),
         ")",
@@ -1029,7 +1028,7 @@ module.exports = grammar({
       prec.right(
         seq(
           "for",
-          optional("constexpr"),
+          optional("comptime"),
           "(",
           sepBy(",", $._expression),
           optional(","),
@@ -1044,7 +1043,7 @@ module.exports = grammar({
       prec.right(
         seq(
           "while",
-          optional("constexpr"),
+          optional("comptime"),
           "(",
           field("condition", $._expression),
           ")",
@@ -1055,9 +1054,17 @@ module.exports = grammar({
       ),
 
     do_while_expression: ($) =>
-      seq("do", field("body", $.block), "while", "(", field("condition", $._expression), ")"),
+      seq(
+        "do",
+        field("body", $.block),
+        "while",
+        optional("comptime"),
+        "(",
+        field("condition", $._expression),
+        ")",
+      ),
 
-    loop_expression: ($) => seq("loop", field("body", $.block)),
+    loop_expression: ($) => seq("loop", optional("comptime"), field("body", $.block)),
   },
 });
 

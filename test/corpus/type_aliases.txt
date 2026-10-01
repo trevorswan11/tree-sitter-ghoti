@@ -9,7 +9,7 @@ const Never := noreturn;
 const Bytes := []u8;
 const Pair := [2]i32;
 const Callback := ^fn(status: i32) callconv(.win64): void;
-constexpr NewRes := Result(T, NewErr);
+const NewRes := Result(T, NewErr);
 
 ---
 

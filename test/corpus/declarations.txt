@@ -1,0 +1,191 @@
+==================
+Binding forms: const, let, let mut, comptime let mut
+==================
+
+const N := 16;
+let base: i32 = 10;
+pub let mut counter: u64 = 0;
+export("ghoti_limit") let limit: u64 = 8;
+pub weak const hook := fn(): i32 { return 1; };
+const f := fn(): void {
+    let x := base + 2;
+    comptime let mut cursor: usize = 0;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    (export_modifier
+      link_name: (string_literal))
+    name: (identifier)
+    type: (primitive_type)
+    value: (integer_literal))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (integer_literal)))))
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (decl_statement
+          name: (identifier)
+          value: (binary_expression
+            left: (identifier)
+            right: (integer_literal)))
+        (decl_statement
+          name: (identifier)
+          type: (primitive_type)
+          value: (integer_literal))))))
+
+==================
+comptime parameters, headers, and loops
+==================
+
+const f := fn(comptime n: usize, rest...): void {
+    if comptime (n > 4) {}
+    for comptime (rest) |r| {}
+    while comptime (n < 2) {}
+    match comptime (n) { _ => {} }
+    loop comptime { break; }
+    do {} while comptime (false);
+};
+impl(comptime N: usize) Box(N) {}
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier))
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (if_expression
+            condition: (binary_expression
+              left: (identifier)
+              right: (integer_literal))
+            consequence: (expression_statement
+              (block))))
+        (expression_statement
+          (for_expression
+            (identifier)
+            (capture
+              (identifier))
+            body: (block)))
+        (expression_statement
+          (while_expression
+            condition: (binary_expression
+              left: (identifier)
+              right: (integer_literal))
+            body: (block)))
+        (expression_statement
+          (match_expression
+            matcher: (identifier)
+            (match_arm
+              pattern: (underscore)
+              body: (block))))
+        (expression_statement
+          (loop_expression
+            body: (block
+              (break_statement))))
+        (expression_statement
+          (do_while_expression
+            body: (block)
+            condition: (boolean_literal))))))
+  (impl_statement
+    (impl_parameters
+      (impl_parameter
+        name: (identifier)
+        type: (primitive_type)))
+    type: (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (identifier)))
+    body: (impl_body)))
+
+==================
+comptime blocks, labels, and expressions
+==================
+
+const f := fn(): i32 {
+    comptime { check(); }
+    let v := comptime name: { break :name 3; };
+    let a := comptime twice(21) + x;
+    let b := comptime (1 + 2) * 3;
+    comptime validate(fmt);
+    return if comptime 1 else 2;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (comptime_expression
+            body: (block
+              (expression_statement
+                (call_expression
+                  function: (identifier)
+                  arguments: (arguments))))))
+        (decl_statement
+          name: (identifier)
+          value: (comptime_expression
+            label: (identifier)
+            body: (block
+              (break_statement
+                label: (identifier)
+                (integer_literal)))))
+        (decl_statement
+          name: (identifier)
+          value: (binary_expression
+            left: (comptime_expression
+              operand: (call_expression
+                function: (identifier)
+                arguments: (arguments
+                  (integer_literal))))
+            right: (identifier)))
+        (decl_statement
+          name: (identifier)
+          value: (binary_expression
+            left: (comptime_expression
+              operand: (parenthesized_expression
+                (binary_expression
+                  left: (integer_literal)
+                  right: (integer_literal))))
+            right: (integer_literal)))
+        (expression_statement
+          (comptime_expression
+            operand: (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (identifier)))))
+        (return_statement
+          (if_expression
+            consequence: (integer_literal)
+            alternate: (integer_literal)))))))

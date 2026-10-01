@@ -95,11 +95,11 @@ const open_two := fn(): i32 {
           (integer_literal))))))
 
 ==================
-constexpr var, in either keyword order
+comptime let mut
 ==================
 
-constexpr var counter: i32 = 0;
-var constexpr other: i32 = 0;
+comptime let mut counter: i32 = 0;
+comptime let mut other: i32 = 0;
 
 ---
 
@@ -114,14 +114,14 @@ var constexpr other: i32 = 0;
     value: (integer_literal)))
 
 ==================
-for constexpr and while constexpr
+for comptime and while comptime
 ==================
 
 const unroll := fn(): void {
-    for constexpr (0..4) |i| {
-        const x := i;
+    for comptime (0..4) |i| {
+        let x := i;
     }
-    while constexpr (true) {
+    while comptime (true) {
         break;
     }
 };
@@ -194,7 +194,7 @@ struct {
           return_type: (primitive_type))))))
 
 ==================
-Untyped, bound, and constexpr parameter packs
+Untyped, bound, and comptime parameter packs
 ==================
 
 const sum := fn(rest...): i32 {
@@ -205,7 +205,7 @@ const bounded := fn(rest: impl Writer...): i32 {
     return 0;
 };
 
-const scaled := fn(constexpr n: usize, xs: []i32): i32 {
+const scaled := fn(comptime n: usize, xs: []i32): i32 {
     return n;
 };
 

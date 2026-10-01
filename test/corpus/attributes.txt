@@ -163,7 +163,7 @@ Visibility attribute on exported symbols
 ==================
 
 @[visibility(.hidden)] export const helper := fn(): i32 { return 1; };
-@[visibility(.protected)] pub var counter: i32 = 0;
+@[visibility(.protected)] pub let mut counter: i32 = 0;
 
 ---
 

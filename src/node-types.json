@@ -52,7 +52,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -236,7 +236,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -462,7 +462,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -715,7 +715,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -1059,7 +1059,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -1259,7 +1259,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -1519,7 +1519,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -1783,7 +1783,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -2094,7 +2094,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -2378,7 +2378,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -2637,7 +2637,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -2852,7 +2852,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -3072,7 +3072,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -3246,7 +3246,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -3426,7 +3426,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -3712,12 +3712,12 @@
     }
   },
   {
-    "type": "constexpr_expression",
+    "type": "comptime_expression",
     "named": true,
     "fields": {
       "body": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "block",
@@ -3731,6 +3731,180 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "operand": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "address_of_expression",
+            "named": true
+          },
+          {
+            "type": "array_expression",
+            "named": true
+          },
+          {
+            "type": "asm_expression",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
+            "named": true
+          },
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "block",
+            "named": true
+          },
+          {
+            "type": "boolean_literal",
+            "named": true
+          },
+          {
+            "type": "builtin_call_expression",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "cfg_value_guard_call",
+            "named": true
+          },
+          {
+            "type": "char_literal",
+            "named": true
+          },
+          {
+            "type": "comptime_expression",
+            "named": true
+          },
+          {
+            "type": "dereference_expression",
+            "named": true
+          },
+          {
+            "type": "do_while_expression",
+            "named": true
+          },
+          {
+            "type": "dot_expression",
+            "named": true
+          },
+          {
+            "type": "enum_expression",
+            "named": true
+          },
+          {
+            "type": "float_literal",
+            "named": true
+          },
+          {
+            "type": "for_expression",
+            "named": true
+          },
+          {
+            "type": "function_expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "if_expression",
+            "named": true
+          },
+          {
+            "type": "implicit_access_expression",
+            "named": true
+          },
+          {
+            "type": "index_expression",
+            "named": true
+          },
+          {
+            "type": "initializer_expression",
+            "named": true
+          },
+          {
+            "type": "integer_literal",
+            "named": true
+          },
+          {
+            "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "labeled_expression",
+            "named": true
+          },
+          {
+            "type": "loop_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
+            "named": true
+          },
+          {
+            "type": "multiline_string_literal",
+            "named": true
+          },
+          {
+            "type": "nullptr_literal",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "reference_expression",
+            "named": true
+          },
+          {
+            "type": "string_literal",
+            "named": true
+          },
+          {
+            "type": "struct_expression",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          },
+          {
+            "type": "undefined_literal",
+            "named": true
+          },
+          {
+            "type": "union_expression",
+            "named": true
+          },
+          {
+            "type": "unreachable_literal",
+            "named": true
+          },
+          {
+            "type": "unwrap_expression",
+            "named": true
+          },
+          {
+            "type": "while_expression",
             "named": true
           }
         ]
@@ -3772,15 +3946,19 @@
         "required": true,
         "types": [
           {
+            "type": "comptime",
+            "named": false
+          },
+          {
             "type": "const",
             "named": false
           },
           {
-            "type": "constexpr",
+            "type": "let",
             "named": false
           },
           {
-            "type": "var",
+            "type": "mut",
             "named": false
           }
         ]
@@ -3922,7 +4100,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -4196,7 +4374,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -4376,7 +4554,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -4566,7 +4744,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -4756,7 +4934,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -5291,7 +5469,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -5633,7 +5811,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -5908,7 +6086,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -6182,7 +6360,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -6435,7 +6613,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -6834,7 +7012,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -7052,7 +7230,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -7234,7 +7412,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -7881,7 +8059,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -8055,7 +8233,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -8235,7 +8413,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -8410,7 +8588,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -8797,7 +8975,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -8996,7 +9174,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -9276,7 +9454,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -9611,7 +9789,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -9891,7 +10069,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -10155,7 +10333,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -10343,7 +10521,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -10523,7 +10701,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -10787,7 +10965,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -11123,7 +11301,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -11371,7 +11549,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -11633,7 +11811,7 @@
             "named": true
           },
           {
-            "type": "constexpr_expression",
+            "type": "comptime_expression",
             "named": true
           },
           {
@@ -11808,7 +11986,7 @@
           "named": true
         },
         {
-          "type": "constexpr_expression",
+          "type": "comptime_expression",
           "named": true
         },
         {
@@ -12240,19 +12418,19 @@
     "extra": true
   },
   {
+    "type": "comptime",
+    "named": false
+  },
+  {
+    "type": "comptime_float",
+    "named": false
+  },
+  {
+    "type": "comptime_int",
+    "named": false
+  },
+  {
     "type": "const",
-    "named": false
-  },
-  {
-    "type": "constexpr",
-    "named": false
-  },
-  {
-    "type": "constexpr_float",
-    "named": false
-  },
-  {
-    "type": "constexpr_int",
     "named": false
   },
   {
@@ -12377,6 +12555,10 @@
     "named": false
   },
   {
+    "type": "let",
+    "named": false
+  },
+  {
     "type": "loop",
     "named": false
   },
@@ -12491,10 +12673,6 @@
   },
   {
     "type": "usize",
-    "named": false
-  },
-  {
-    "type": "var",
     "named": false
   },
   {

@@ -82,13 +82,13 @@ const f := fn(c: bool): void {
                   label: (identifier))))))))))
 
 ==================
-var and const static members of a struct
+let mut and const static members of a struct
 ==================
 
 const Counter := struct {
     n: i32,
     const LIMIT := 100;
-    var live: i32 = 0;
+    let mut live: i32 = 0;
     const tick := fn(^mut self): void { live += 1; };
 };
 

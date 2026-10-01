@@ -19,16 +19,16 @@ const open_two := fn(): i32 {
     return 0;
 };
 
-// constexpr var, either keyword order.
-constexpr var counter: i32 = 0;
-var constexpr other: i32 = 0;
+// comptime let mut.
+comptime let mut counter: i32 = 0;
+comptime let mut other: i32 = 0;
 
-// for constexpr / while constexpr.
+// for comptime / while comptime.
 const unroll := fn(): void {
-    for constexpr (0..4) |i| {
-        const x := i;
+    for comptime (0..4) |i| {
+        let x := i;
     }
-    while constexpr (counter < 4) {
+    while comptime (counter < 4) {
         counter += 1;
     }
 };
@@ -36,7 +36,7 @@ const unroll := fn(): void {
 // callconv on a function type value, not just a declaration.
 const Handler := fn(x: i32) callconv(.c): i32;
 
-// Parameter packs: untyped, bound, and constexpr params.
+// Parameter packs: untyped, bound, and comptime params.
 const sum := fn(rest...): i32 {
     return total(rest...);
 };
@@ -45,7 +45,7 @@ const bounded := fn(rest: impl Writer...): i32 {
     return 0;
 };
 
-const scaled := fn(constexpr n: usize, xs: []i32): i32 {
+const scaled := fn(comptime n: usize, xs: []i32): i32 {
     return n;
 };
 

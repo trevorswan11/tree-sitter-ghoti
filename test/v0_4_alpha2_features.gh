@@ -31,3 +31,19 @@ const pick := fn(c: bool): i32 {
         return 2;
     }
 };
+
+// Declaration forms: compile-time `const`, runtime `let` / `let mut`, compile-time-mutable `comptime let mut`.
+const N := 16;
+pub let mut hits: u64 = 0;
+export("ghoti_limit") let limit: u64 = 8;
+
+const twice := fn(v: i32): i32 { return v * 2; };
+
+const scale := fn(comptime k: i32, x: i32): i32 {
+    comptime let mut acc: i32 = 0;
+    for comptime (0..4) |i| { acc += i; }
+    let base := comptime twice(21) + x;
+    comptime check();
+    loop comptime { break; }
+    return base * k + acc;
+};

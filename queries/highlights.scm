@@ -90,16 +90,16 @@
 ; Labels
 (labeled_statement label: (identifier) @label)
 (labeled_expression label: (identifier) @label)
-(constexpr_expression label: (identifier) @label)
+(comptime_expression label: (identifier) @label)
 (break_statement label: (identifier) @label)
 (continue_statement label: (identifier) @label)
 
 ; Keywords
 [
   "fn"
-  "var"
+  "let"
   "const"
-  "constexpr"
+  "comptime"
   "struct"
   "enum"
   "union"

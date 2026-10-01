@@ -3,7 +3,7 @@ extern fn types are thin C-ABI function pointers
 ==================
 
 const Thin := extern fn(a: i32) callconv(.c): i32;
-var cb: extern fn(a: i32): i32 = undefined;
+let mut cb: extern fn(a: i32): i32 = undefined;
 
 ---
 
@@ -30,8 +30,8 @@ var cb: extern fn(a: i32): i32 = undefined;
 fn types under reference and pointer modifiers
 ==================
 
-var by_ref: &fn(a: i32): i32 = undefined;
-var maybe: ^fn(a: i32): i32 = nullptr;
+let mut by_ref: &fn(a: i32): i32 = undefined;
+let mut maybe: ^fn(a: i32): i32 = nullptr;
 
 ---
 
@@ -193,12 +193,12 @@ const chained := fn(): i32 { return make()()(1); };
               (integer_literal))))))))
 
 ==================
-if constexpr without a condition branches on the evaluation context
+if comptime without a condition branches on the evaluation context
 ==================
 
 const where := fn(): i32 {
-    if constexpr { n += 5; }
-    return if constexpr 1 else 2;
+    if comptime { n += 5; }
+    return if comptime 1 else 2;
 };
 
 ---
@@ -223,10 +223,10 @@ const where := fn(): i32 {
             alternate: (integer_literal)))))))
 
 ==================
-if constexpr with a parenthesized condition keeps its condition
+if comptime with a parenthesized condition keeps its condition
 ==================
 
-const pick := fn(): i32 { return if constexpr (n > 1) n else 0; };
+const pick := fn(): i32 { return if comptime (n > 1) n else 0; };
 
 ---
 

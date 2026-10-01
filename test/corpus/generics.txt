@@ -5,7 +5,7 @@ Generic auto-parameter method with @this()
 const S := struct {
     x: i32,
     const make := fn(v: auto): i32 {
-        const r: @this() = S{ .x = v };
+        let r: @this() = S{ .x = v };
         return r.x;
     };
 };
@@ -47,7 +47,7 @@ const S := struct {
 ================================================================================
 
 const T := @TypeOf(a, b, c);
-var x: @TypeOf(a, b) = a;
+let mut x: @TypeOf(a, b) = a;
 
 --------------------------------------------------------------------------------
 
