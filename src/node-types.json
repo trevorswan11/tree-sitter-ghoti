@@ -7580,6 +7580,26 @@
             "named": true
           }
         ]
+      },
+      "payload": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "capture",
+            "named": true
+          }
+        ]
+      },
+      "residual": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "capture",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -11932,6 +11952,26 @@
           },
           {
             "type": "while_expression",
+            "named": true
+          }
+        ]
+      },
+      "payload": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "capture",
+            "named": true
+          }
+        ]
+      },
+      "residual": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "capture",
             "named": true
           }
         ]

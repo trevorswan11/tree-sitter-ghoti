@@ -931,8 +931,16 @@ module.exports = grammar({
             "(",
             field("condition", $._expression),
             ")",
+            // `if (opt) |v| ... else |e| ...` unwraps an `Unwrappable` condition
+            optional(seq("|", field("payload", $.capture), "|")),
             field("consequence", $._if_branch),
-            optional(seq("else", field("alternate", $._if_branch))),
+            optional(
+              seq(
+                "else",
+                optional(seq("|", field("residual", $.capture), "|")),
+                field("alternate", $._if_branch),
+              ),
+            ),
           ),
         ),
         // `if comptime a else b`: `a` under compile-time evaluation, `b` at runtime. A `(`
@@ -1051,9 +1059,16 @@ module.exports = grammar({
           "(",
           field("condition", $._expression),
           ")",
+          optional(seq("|", field("payload", $.capture), "|")),
           optional(seq(":", "(", $._expression, ")")),
           field("body", $.block),
-          optional(seq("else", field("alternate", $._statement_body))),
+          optional(
+            seq(
+              "else",
+              optional(seq("|", field("residual", $.capture), "|")),
+              field("alternate", $._statement_body),
+            ),
+          ),
         ),
       ),
 

@@ -1,0 +1,58 @@
+==================
+if and while unwrap captures
+==================
+
+const f = fn(): void {
+    if (res) |&mut v| {} else |e| {}
+    const n = if (parse(s)) |v| v else |_| 0;
+    while (it.next()) |item| : (i += 1) {} else |err| {}
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      return_type: (primitive_type)
+      body: (block
+        (expression_statement
+          (if_expression
+            condition: (identifier)
+            payload: (capture
+              (identifier))
+            consequence: (expression_statement
+              (block))
+            residual: (capture
+              (identifier))
+            alternate: (expression_statement
+              (block))))
+        (decl_statement
+          name: (identifier)
+          value: (if_expression
+            condition: (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (identifier)))
+            payload: (capture
+              (identifier))
+            consequence: (identifier)
+            residual: (capture)
+            alternate: (integer_literal)))
+        (expression_statement
+          (while_expression
+            condition: (call_expression
+              function: (dot_expression
+                object: (identifier)
+                member: (identifier))
+              arguments: (arguments))
+            payload: (capture
+              (identifier))
+            (assignment_expression
+              left: (identifier)
+              right: (integer_literal))
+            body: (block)
+            residual: (capture
+              (identifier))
+            alternate: (expression_statement
+              (block))))))))
