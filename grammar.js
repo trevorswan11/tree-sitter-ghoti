@@ -175,7 +175,7 @@ module.exports = grammar({
         optional(
           seq(
             "|",
-            optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))),
+            optional(choice("&", "^", seq("&", "mut", optional("?")), seq("^", "mut", optional("?")))),
             field("capture", choice($.identifier, "_")),
             "|",
           ),
@@ -249,10 +249,14 @@ module.exports = grammar({
       ),
 
     // Recursive so `mut volatile T` is just two nested modified_types
-    modified_type: ($) => prec.right(seq(choice("mut", "volatile"), field("inner", $._type))),
+    // `mut? T` (as in `[]mut? T`) takes the enclosing function's `mut?` mutability
+    modified_type: ($) =>
+      prec.right(seq(choice(seq("mut", optional("?")), "volatile"), field("inner", $._type))),
 
-    pointer_type: ($) => prec.right(seq("^", optional("mut"), field("inner", $._type))),
-    reference_type: ($) => prec.right(seq("&", optional("mut"), field("inner", $._type))),
+    pointer_type: ($) =>
+      prec.right(seq("^", optional(seq("mut", optional("?"))), field("inner", $._type))),
+    reference_type: ($) =>
+      prec.right(seq("&", optional(seq("mut", optional("?"))), field("inner", $._type))),
     array_type: ($) =>
       seq(
         "[",
@@ -645,9 +649,9 @@ module.exports = grammar({
 
     dereference_expression: ($) => prec(PREC.UNARY, seq("*", field("operand", $._expression))),
     reference_expression: ($) =>
-      prec(PREC.UNARY, seq("&", optional("mut"), field("operand", $._expression))),
+      prec(PREC.UNARY, seq("&", optional(seq("mut", optional("?"))), field("operand", $._expression))),
     address_of_expression: ($) =>
-      prec(PREC.UNARY, seq("^", optional("mut"), field("operand", $._expression))),
+      prec(PREC.UNARY, seq("^", optional(seq("mut", optional("?"))), field("operand", $._expression))),
 
     // Postfix `?` / `!` unwrap operators for `Result` / `Optional`.
     unwrap_expression: ($) =>
@@ -726,7 +730,7 @@ module.exports = grammar({
     // -------------------------------------------------------------- functions
 
     self_parameter: ($) =>
-      seq(optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))), choice("self", "this")),
+      seq(optional(choice("&", "^", seq("&", "mut", optional("?")), seq("^", "mut", optional("?")))), choice("self", "this")),
 
     // `x: T`, an untyped pack `rest...`, a bound pack `rest: impl I...`, or `comptime n: T`.
     parameter: ($) =>
@@ -1000,7 +1004,7 @@ module.exports = grammar({
         optional(
           seq(
             "|",
-            optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))),
+            optional(choice("&", "^", seq("&", "mut", optional("?")), seq("^", "mut", optional("?")))),
             field("capture", choice($.identifier, "_")),
             "|",
           ),
@@ -1022,7 +1026,7 @@ module.exports = grammar({
       ),
 
     capture: ($) =>
-      seq(optional(choice("&", "^", seq("&", "mut"), seq("^", "mut"))), choice($.identifier, "_")),
+      seq(optional(choice("&", "^", seq("&", "mut", optional("?")), seq("^", "mut", optional("?")))), choice($.identifier, "_")),
 
     for_expression: ($) =>
       prec.right(

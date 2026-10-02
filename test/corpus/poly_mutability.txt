@@ -1,0 +1,37 @@
+==================
+mut? references, pointers, slices, and captures
+==================
+
+const at = fn(&mut? self, s: []mut? u8): ^mut? u8 {
+    for (s) |&mut? e| { _ = e; }
+    return ^mut? s[0];
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (self_parameter)
+      (parameter
+        name: (identifier)
+        type: (array_type
+          inner: (modified_type
+            inner: (primitive_type))))
+      return_type: (pointer_type
+        inner: (primitive_type))
+      body: (block
+        (expression_statement
+          (for_expression
+            (identifier)
+            (capture
+              (identifier))
+            body: (block
+              (discard_statement
+                value: (identifier)))))
+        (return_statement
+          (address_of_expression
+            operand: (index_expression
+              array: (identifier)
+              index: (integer_literal))))))))
