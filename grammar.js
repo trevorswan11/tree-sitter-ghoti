@@ -42,6 +42,8 @@ module.exports = grammar({
     [$.function_expression],
     [$.dyn_type, $._expression],
     [$.dyn_type, $.dyn_function_type, $._expression],
+    [$.impl_function_type, $._expression],
+    [$._type, $.impl_function_type, $._expression],
     [$.parenthesized_expression, $.if_expression],
     [$.parameter],
   ],
@@ -235,6 +237,7 @@ module.exports = grammar({
         $.function_type,
         $.dyn_type,
         $.dyn_function_type,
+        $.impl_function_type,
         $.impl_type,
         $.primitive_type,
         $.identifier,
@@ -293,6 +296,21 @@ module.exports = grammar({
     dyn_assoc_bindings: ($) => seq("(", sepBy(",", $.dyn_assoc_binding), optional(","), ")"),
 
     dyn_assoc_binding: ($) => seq(field("name", $.identifier), "=", field("type", $._type)),
+
+    // `impl Fn(n: i32): R` parameter-position sugar: any callable with exactly that signature,
+    // where `auto` deduces from the argument
+    impl_function_type: ($) =>
+      seq(
+        "impl",
+        field("name", $.identifier),
+        "(",
+        sepBy(",", $.parameter),
+        optional(","),
+        ")",
+        optional($.callconv),
+        ":",
+        field("return_type", $._type),
+      ),
 
     // `impl I` / `impl (A + B)` parameter-position sugar.
     impl_type: ($) =>

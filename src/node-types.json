@@ -288,6 +288,10 @@
           "named": true
         },
         {
+          "type": "impl_function_type",
+          "named": true
+        },
+        {
           "type": "impl_type",
           "named": true
         },
@@ -633,6 +637,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -944,6 +952,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -1701,6 +1713,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -1952,6 +1968,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -4014,6 +4034,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -5116,6 +5140,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -5218,6 +5246,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -5342,6 +5374,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -6262,6 +6298,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -6804,6 +6844,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -6899,6 +6943,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -7623,6 +7671,114 @@
     }
   },
   {
+    "type": "impl_function_type",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "array_type",
+            "named": true
+          },
+          {
+            "type": "builtin_call_expression",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "dot_expression",
+            "named": true
+          },
+          {
+            "type": "dyn_function_type",
+            "named": true
+          },
+          {
+            "type": "dyn_type",
+            "named": true
+          },
+          {
+            "type": "enum_expression",
+            "named": true
+          },
+          {
+            "type": "function_type",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
+            "type": "impl_type",
+            "named": true
+          },
+          {
+            "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "modified_type",
+            "named": true
+          },
+          {
+            "type": "pointer_type",
+            "named": true
+          },
+          {
+            "type": "primitive_type",
+            "named": true
+          },
+          {
+            "type": "reference_type",
+            "named": true
+          },
+          {
+            "type": "struct_expression",
+            "named": true
+          },
+          {
+            "type": "union_expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "callconv",
+          "named": true
+        },
+        {
+          "type": "parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "impl_parameter",
     "named": true,
     "fields": {
@@ -7674,6 +7830,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -7782,6 +7942,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -7853,6 +8017,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -7943,6 +8111,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "impl_function_type",
           "named": true
         },
         {
@@ -8836,6 +9008,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -9716,6 +9892,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -10001,6 +10181,10 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_type",
             "named": true
           },
@@ -10257,6 +10441,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {
@@ -10890,6 +11078,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "impl_function_type",
             "named": true
           },
           {

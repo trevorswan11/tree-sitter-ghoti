@@ -82,6 +82,8 @@
 (dyn_type interface: (dot_expression member: (identifier) @type))
 (dyn_function_type name: (identifier) @type.builtin)
 (dyn_function_type return_type: (identifier) @type)
+(impl_function_type name: (identifier) @type.builtin)
+(impl_function_type return_type: (identifier) @type)
 (pointer_type inner: (identifier) @type)
 (reference_type inner: (identifier) @type)
 (array_type inner: (identifier) @type)

@@ -68,3 +68,41 @@ let mut x: @TypeOf(a, b) = a;
         (identifier)
         (identifier)))
     value: (identifier)))
+
+================================================================================
+impl Fn and auto patterns in parameters
+================================================================================
+
+const f = fn(g: impl Fn(n: i32): auto, h: &impl Fn(x: []auto): bool, xs: [3]auto): void {};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (impl_function_type
+          name: (identifier)
+          (parameter
+            name: (identifier)
+            type: (primitive_type))
+          return_type: (primitive_type)))
+      (parameter
+        name: (identifier)
+        type: (reference_type
+          inner: (impl_function_type
+            name: (identifier)
+            (parameter
+              name: (identifier)
+              type: (array_type
+                inner: (primitive_type)))
+            return_type: (primitive_type))))
+      (parameter
+        name: (identifier)
+        type: (array_type
+          size: (integer_literal)
+          inner: (primitive_type)))
+      return_type: (primitive_type)
+      body: (block))))
