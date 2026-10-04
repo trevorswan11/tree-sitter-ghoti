@@ -2113,6 +2113,46 @@
         },
         {
           "type": "STRING",
+          "value": "c_char"
+        },
+        {
+          "type": "STRING",
+          "value": "c_short"
+        },
+        {
+          "type": "STRING",
+          "value": "c_ushort"
+        },
+        {
+          "type": "STRING",
+          "value": "c_int"
+        },
+        {
+          "type": "STRING",
+          "value": "c_uint"
+        },
+        {
+          "type": "STRING",
+          "value": "c_long"
+        },
+        {
+          "type": "STRING",
+          "value": "c_ulong"
+        },
+        {
+          "type": "STRING",
+          "value": "c_longlong"
+        },
+        {
+          "type": "STRING",
+          "value": "c_ulonglong"
+        },
+        {
+          "type": "STRING",
+          "value": "c_longdouble"
+        },
+        {
+          "type": "STRING",
           "value": "f16"
         },
         {

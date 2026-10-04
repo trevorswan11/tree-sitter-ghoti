@@ -189,3 +189,23 @@ const f = fn(): i32 {
           (if_expression
             consequence: (integer_literal)
             alternate: (integer_literal)))))))
+
+================================================================================
+C types are primitive types
+================================================================================
+
+extern("c", "abs") const c_abs: fn(x: c_int): c_long;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    (extern_modifier
+      target: (string_literal)
+      link_name: (string_literal))
+    name: (identifier)
+    type: (function_type
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      return_type: (primitive_type))))

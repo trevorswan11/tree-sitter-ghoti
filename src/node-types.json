@@ -12629,6 +12629,46 @@
     "named": false
   },
   {
+    "type": "c_char",
+    "named": false
+  },
+  {
+    "type": "c_int",
+    "named": false
+  },
+  {
+    "type": "c_long",
+    "named": false
+  },
+  {
+    "type": "c_longdouble",
+    "named": false
+  },
+  {
+    "type": "c_longlong",
+    "named": false
+  },
+  {
+    "type": "c_short",
+    "named": false
+  },
+  {
+    "type": "c_uint",
+    "named": false
+  },
+  {
+    "type": "c_ulong",
+    "named": false
+  },
+  {
+    "type": "c_ulonglong",
+    "named": false
+  },
+  {
+    "type": "c_ushort",
+    "named": false
+  },
+  {
     "type": "callconv",
     "named": false
   },
