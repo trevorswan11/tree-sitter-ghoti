@@ -1,0 +1,50 @@
+================================================================================
+@cfgValue with a plain predicate and with guard arms
+================================================================================
+
+const HAS_OS = @cfgValue(os == .linux and arch == .x86_64);
+const width = @cfgValue(ptr_bits == 64 => 8, _ => 4);
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (cfg_value_call
+      function: (builtin_identifier)
+      predicate: (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (implicit_access_expression
+            member: (identifier)))
+        right: (binary_expression
+          left: (identifier)
+          right: (implicit_access_expression
+            member: (identifier))))))
+  (decl_statement
+    name: (identifier)
+    value: (cfg_value_call
+      function: (builtin_identifier)
+      (cfg_guard_arm
+        predicate: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        value: (integer_literal))
+      (cfg_guard_arm
+        value: (integer_literal)))))
+
+================================================================================
+Comparing against a slice type
+================================================================================
+
+const same = T == []u8;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (binary_expression
+      left: (identifier)
+      right: (array_type
+        inner: (primitive_type)))))

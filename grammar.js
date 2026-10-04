@@ -386,7 +386,7 @@ module.exports = grammar({
         $.unreachable_literal,
         $.nullptr_literal,
         $.builtin_call_expression,
-        $.cfg_value_guard_call,
+        $.cfg_value_call,
         $.call_expression,
         $.index_expression,
         $.dot_expression,
@@ -431,13 +431,13 @@ module.exports = grammar({
         prec(PREC.UNARY, seq("comptime", field("operand", $._expression))),
       ),
 
-    // `@cfgValue(pred => val, ..., _ => fallback)`: the guard-arm form. The plain single-argument
-    // form `@cfgValue(x)` is just an ordinary builtin_call_expression.
-    cfg_value_guard_call: ($) =>
+    // `@cfgValue(pred)` or `@cfgValue(pred => val, ..., _ => fallback)`. `@cfgValue` lexes as its
+    // own token, so the plain form has to be spelled out here too
+    cfg_value_call: ($) =>
       seq(
         field("function", alias("@cfgValue", $.builtin_identifier)),
         "(",
-        sepBy1(",", $.cfg_guard_arm),
+        choice(field("predicate", $._expression), sepBy1(",", $.cfg_guard_arm)),
         optional(","),
         ")",
       ),
@@ -698,11 +698,18 @@ module.exports = grammar({
         [PREC.ADD, choice("+", "-", "+%", "-%", "+|", "-|")],
         [PREC.MUL, choice("*", "/", "%", "*%", "*|")],
       ];
+      // Types compare too (`T == []u8`), including the ones with no expression spelling
+      const operand = (precedence) =>
+        precedence === PREC.COMPARE ? choice($._expression, prec.dynamic(-1, $.array_type)) : $._expression;
       return choice(
         ...table.map(([precedence, operator]) =>
           prec.left(
             precedence,
-            seq(field("left", $._expression), field("operator", operator), field("right", $._expression)),
+            seq(
+              field("left", operand(precedence)),
+              field("operator", operator),
+              field("right", operand(precedence)),
+            ),
           ),
         ),
       );
