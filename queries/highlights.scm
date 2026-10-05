@@ -27,7 +27,6 @@
 
 ; `@[name(args)]` attribute lists
 (attribute name: (identifier) @attribute)
-(attribute_list "@[" @attribute "]" @attribute)
 (decl_statement name: (identifier) @function
   value: (function_expression))
 (function_expression) @function
@@ -207,5 +206,5 @@
 ] @operator
 
 ; Punctuation
-["(" ")" "[" "]" "{" "}"] @punctuation.bracket
+["(" ")" "[" "@[" "]" "{" "}"] @punctuation.bracket
 ["," ";" ":"] @punctuation.delimiter
