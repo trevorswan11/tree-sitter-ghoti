@@ -45,6 +45,7 @@ module.exports = grammar({
     [$.impl_function_type, $._expression],
     [$._type, $.impl_function_type, $._expression],
     [$.parenthesized_expression, $.if_expression],
+    [$._if_branch, $._arm_branch],
     [$.parameter],
   ],
 
@@ -320,7 +321,7 @@ module.exports = grammar({
     callconv: ($) => seq("callconv", "(", field("convention", $.calling_convention), ")"),
 
     calling_convention: (_) =>
-      seq(".", choice("c", "sysv", "win64", "stdcall", "fastcall", "aapcs")),
+      seq(".", choice("c", "sysv", "win64", "stdcall", "fastcall", "aapcs", "winapi")),
 
     // Every non-variadic parameter must be named (`fn(x: i32, done: ^bool): void`), not bare
     // types; the return type is mandatory. `extern fn` is the thin, C-ABI code pointer.
@@ -674,7 +675,7 @@ module.exports = grammar({
       seq(field("array_type", $.array_type), "{", sepBy(",", $._expression), optional(","), "}"),
 
     unary_expression: ($) =>
-      prec(PREC.UNARY, seq(field("operator", choice("!", "~", "-", "+")), field("operand", $._expression))),
+      prec(PREC.UNARY, seq(field("operator", choice("!", "~", "-", "-%", "+")), field("operand", $._expression))),
 
     dereference_expression: ($) => prec(PREC.UNARY, seq("*", field("operand", $._expression))),
     reference_expression: ($) =>
@@ -849,8 +850,7 @@ module.exports = grammar({
     _struct_body: ($) =>
       seq(
         "{",
-        sepBy(",", choice($.field_declaration, $.field_cfg_group)),
-        optional(","),
+        cfgList($.field_declaration, $.field_cfg_group),
         repeat(choice($._member, $.member_cfg_group)),
         "}",
       ),
@@ -881,8 +881,7 @@ module.exports = grammar({
         "enum",
         optional(seq(":", field("underlying", $._type))),
         "{",
-        sepBy(",", choice($.enumerator, "_", $.enumerator_cfg_group)),
-        optional(","),
+        cfgList(choice($.enumerator, "_"), $.enumerator_cfg_group),
         repeat(choice($._member, $.member_cfg_group)),
         "}",
       ),
@@ -1053,8 +1052,30 @@ module.exports = grammar({
             "|",
           ),
         ),
-        field("body", choice($._expression, $._jump_value)),
+        field("body", choice($._expression, $._jump_value, alias($._arm_if, $.if_expression))),
       ),
+
+    // `.a => if (c) return x,`: an arm's `if` may branch to a jump, which takes no `;` there
+    _arm_if: ($) =>
+      prec.right(
+        seq(
+          "if",
+          "(",
+          field("condition", $._expression),
+          ")",
+          optional(seq("|", field("payload", $.capture), "|")),
+          field("consequence", $._arm_branch),
+          optional(
+            seq(
+              "else",
+              optional(seq("|", field("residual", $.capture), "|")),
+              field("alternate", $._arm_branch),
+            ),
+          ),
+        ),
+      ),
+    _arm_branch: ($) =>
+      choice($._jump_value, alias($._arm_if, $.if_expression), $._expression),
 
     match_expression: ($) =>
       seq(
@@ -1125,6 +1146,12 @@ module.exports = grammar({
 
 function sepBy(sep, rule) {
   return optional(seq(rule, repeat(seq(sep, rule))));
+}
+
+// Comma-separated items with an optional trailing comma, where a `@cfg` group's comma is optional
+// since a braced group ends itself: `a: i32, @cfg(x) { b: u8 } c: i32,`
+function cfgList(item, group) {
+  return seq(repeat(choice(seq(item, ","), seq(group, optional(",")))), optional(item));
 }
 
 function sepBy1(sep, rule) {

@@ -11837,6 +11837,10 @@
             "named": false
           },
           {
+            "type": "-%",
+            "named": false
+          },
+          {
             "type": "~",
             "named": false
           }
@@ -13143,6 +13147,10 @@
   },
   {
     "type": "win64",
+    "named": false
+  },
+  {
+    "type": "winapi",
     "named": false
   },
   {

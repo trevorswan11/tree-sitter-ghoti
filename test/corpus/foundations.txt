@@ -1,0 +1,157 @@
+==================
+callconv(.winapi) on extern fn types and functions
+==================
+
+extern("kernel32", "GetTickCount") const ticks: extern fn() callconv(.winapi): u32;
+const f = fn() callconv(.winapi): void {};
+
+---
+
+(source_file
+  (decl_statement
+    (extern_modifier
+      (string_literal)
+      (string_literal))
+    (identifier)
+    (function_type
+      (callconv
+        (calling_convention))
+      (primitive_type)))
+  (decl_statement
+    (identifier)
+    (function_expression
+      (callconv
+        (calling_convention))
+      (primitive_type)
+      (block))))
+
+==================
+wrapping negation
+==================
+
+_ = -%a;
+
+---
+
+(source_file
+  (discard_statement
+    (unary_expression
+      (identifier))))
+
+==================
+@cfg field groups need no comma after a braced group
+==================
+
+const S = struct { dev: u64, @cfg(os == .linux) { uid: u32, gid: u32 } mode: u32, };
+const E = enum { A, @cfg(os == .windows) { B, C } @cfg(os == .linux) D, F, };
+
+---
+
+(source_file
+  (decl_statement
+    (identifier)
+    (struct_expression
+      (field_declaration
+        (identifier)
+        (primitive_type))
+      (field_cfg_group
+        (cfg_predicate
+          (binary_expression
+            (identifier)
+            (implicit_access_expression
+              (identifier))))
+        (field_declaration
+          (identifier)
+          (primitive_type))
+        (field_declaration
+          (identifier)
+          (primitive_type)))
+      (field_declaration
+        (identifier)
+        (primitive_type))))
+  (decl_statement
+    (identifier)
+    (enum_expression
+      (enumerator
+        (identifier))
+      (enumerator_cfg_group
+        (cfg_predicate
+          (binary_expression
+            (identifier)
+            (implicit_access_expression
+              (identifier))))
+        (enumerator
+          (identifier))
+        (enumerator
+          (identifier)))
+      (enumerator_cfg_group
+        (cfg_predicate
+          (binary_expression
+            (identifier)
+            (implicit_access_expression
+              (identifier))))
+        (enumerator
+          (identifier)))
+      (enumerator
+        (identifier)))))
+
+==================
+match arm if branches to a jump
+==================
+
+const f = fn(u: U, w: i32): i32 {
+    match (u) {
+        .a => |v| if (v <= w) return match (v) {
+            0 => 1,
+            _ => 2,
+        },
+        .b => if (w == 0) break else continue,
+    }
+    return 0;
+};
+
+---
+
+(source_file
+  (decl_statement
+    (identifier)
+    (function_expression
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (primitive_type))
+      (primitive_type)
+      (block
+        (expression_statement
+          (match_expression
+            (identifier)
+            (match_arm
+              (implicit_access_expression
+                (identifier))
+              (identifier)
+              (if_expression
+                (binary_expression
+                  (identifier)
+                  (identifier))
+                (return_statement
+                  (match_expression
+                    (identifier)
+                    (match_arm
+                      (integer_literal)
+                      (integer_literal))
+                    (match_arm
+                      (underscore)
+                      (integer_literal))))))
+            (match_arm
+              (implicit_access_expression
+                (identifier))
+              (if_expression
+                (binary_expression
+                  (identifier)
+                  (integer_literal))
+                (break_statement)
+                (continue_statement)))))
+        (return_statement
+          (integer_literal))))))
