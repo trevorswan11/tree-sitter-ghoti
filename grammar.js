@@ -23,6 +23,12 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   conflicts: ($) => [
+    [$.impl_statement, $.impl_type],
+    [$._named_type, $.impl_function_type, $._expression],
+    [$._named_type, $.array_expression],
+    [$._named_type, $._expression],
+    [$._type_if, $.parenthesized_expression, $.if_expression],
+    [$._type_if_branch, $._expression],
     [$._type, $._expression],
     [$._type, $.array_expression],
     [$.expression_statement, $._expression, $._if_branch],
@@ -232,6 +238,20 @@ module.exports = grammar({
 
     _type: ($) =>
       choice(
+        $._named_type,
+        // Expressions computing a type at compile time
+        alias($._type_if, $.if_expression), // e.g. if (WIDE) i64 else i32
+        $.match_expression, // e.g. match (k) { .a => u8, .b => u32 }
+        $.index_expression, // e.g. TYPES[0]
+      ),
+
+    // A braced branch would read like a statement, so branches stay unbraced
+    _type_if_branch: ($) =>
+      choice($._named_type, alias($._type_if, $.if_expression), $.index_expression),
+
+    // The types spelled without computing them, which is all an `impl` names
+    _named_type: ($) =>
+      choice(
         $.pointer_type,
         $.reference_type,
         $.array_type, // also covers slice types `[]T` (empty size)
@@ -250,6 +270,21 @@ module.exports = grammar({
         $.interface_expression,
         $.builtin_call_expression, // e.g. @this()
         $.modified_type, // bare `mut`/`volatile` prefix, e.g. `let mut v: mut volatile i32;`
+      ),
+
+    // An `if` in a type position chooses between types, so a following `{` or `= value` is not
+    // read into its last branch
+    _type_if: ($) =>
+      prec.right(
+        seq(
+          "if",
+          optional("comptime"),
+          "(",
+          field("condition", $._expression),
+          ")",
+          field("consequence", $._type_if_branch),
+          optional(seq("else", field("alternate", $._type_if_branch))),
+        ),
       ),
 
     // Recursive so `mut volatile T` is just two nested modified_types

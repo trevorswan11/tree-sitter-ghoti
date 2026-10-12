@@ -1284,6 +1284,54 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "_named_type"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_type_if"
+          },
+          "named": true,
+          "value": "if_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "match_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "index_expression"
+        }
+      ]
+    },
+    "_type_if_branch": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_named_type"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_type_if"
+          },
+          "named": true,
+          "value": "if_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "index_expression"
+        }
+      ]
+    },
+    "_named_type": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
           "name": "pointer_type"
         },
         {
@@ -1355,6 +1403,80 @@
           "name": "modified_type"
         }
       ]
+    },
+    "_type_if": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "if"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "comptime"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "FIELD",
+            "name": "condition",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_expression"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          },
+          {
+            "type": "FIELD",
+            "name": "consequence",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_type_if_branch"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "else"
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "alternate",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_type_if_branch"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
     },
     "modified_type": {
       "type": "PREC_RIGHT",
@@ -7926,6 +8048,32 @@
     }
   ],
   "conflicts": [
+    [
+      "impl_statement",
+      "impl_type"
+    ],
+    [
+      "_named_type",
+      "impl_function_type",
+      "_expression"
+    ],
+    [
+      "_named_type",
+      "array_expression"
+    ],
+    [
+      "_named_type",
+      "_expression"
+    ],
+    [
+      "_type_if",
+      "parenthesized_expression",
+      "if_expression"
+    ],
+    [
+      "_type_if_branch",
+      "_expression"
+    ],
     [
       "_type",
       "_expression"

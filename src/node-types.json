@@ -637,6 +637,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -645,7 +649,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -955,6 +967,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -963,7 +979,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -1713,6 +1737,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -1721,7 +1749,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -1971,6 +2007,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -1979,7 +2019,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -4216,6 +4264,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -4224,7 +4276,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -5322,6 +5382,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -5330,7 +5394,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -5431,6 +5503,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -5439,7 +5515,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -5559,6 +5643,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -5567,7 +5655,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -6480,6 +6576,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -6488,7 +6588,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -7026,6 +7134,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -7034,7 +7146,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -7128,6 +7248,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -7136,7 +7260,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -7195,6 +7327,10 @@
           },
           {
             "type": "array_expression",
+            "named": true
+          },
+          {
+            "type": "array_type",
             "named": true
           },
           {
@@ -7274,6 +7410,14 @@
             "named": true
           },
           {
+            "type": "dyn_function_type",
+            "named": true
+          },
+          {
+            "type": "dyn_type",
+            "named": true
+          },
+          {
             "type": "enum_expression",
             "named": true
           },
@@ -7298,6 +7442,10 @@
             "named": true
           },
           {
+            "type": "function_type",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -7306,7 +7454,15 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_statement",
+            "named": true
+          },
+          {
+            "type": "impl_type",
             "named": true
           },
           {
@@ -7350,6 +7506,10 @@
             "named": true
           },
           {
+            "type": "modified_type",
+            "named": true
+          },
+          {
             "type": "multiline_string_literal",
             "named": true
           },
@@ -7362,11 +7522,23 @@
             "named": true
           },
           {
+            "type": "pointer_type",
+            "named": true
+          },
+          {
+            "type": "primitive_type",
+            "named": true
+          },
+          {
             "type": "range_expression",
             "named": true
           },
           {
             "type": "reference_expression",
+            "named": true
+          },
+          {
+            "type": "reference_type",
             "named": true
           },
           {
@@ -7598,6 +7770,10 @@
             "named": true
           },
           {
+            "type": "array_type",
+            "named": true
+          },
+          {
             "type": "asm_expression",
             "named": true
           },
@@ -7674,6 +7850,14 @@
             "named": true
           },
           {
+            "type": "dyn_function_type",
+            "named": true
+          },
+          {
+            "type": "dyn_type",
+            "named": true
+          },
+          {
             "type": "enum_expression",
             "named": true
           },
@@ -7698,6 +7882,10 @@
             "named": true
           },
           {
+            "type": "function_type",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
@@ -7706,7 +7894,15 @@
             "named": true
           },
           {
+            "type": "impl_function_type",
+            "named": true
+          },
+          {
             "type": "impl_statement",
+            "named": true
+          },
+          {
+            "type": "impl_type",
             "named": true
           },
           {
@@ -7750,6 +7946,10 @@
             "named": true
           },
           {
+            "type": "modified_type",
+            "named": true
+          },
+          {
             "type": "multiline_string_literal",
             "named": true
           },
@@ -7762,11 +7962,23 @@
             "named": true
           },
           {
+            "type": "pointer_type",
+            "named": true
+          },
+          {
+            "type": "primitive_type",
+            "named": true
+          },
+          {
             "type": "range_expression",
             "named": true
           },
           {
             "type": "reference_expression",
+            "named": true
+          },
+          {
+            "type": "reference_type",
             "named": true
           },
           {
@@ -7907,6 +8119,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -7915,7 +8131,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -8015,6 +8239,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -8023,7 +8251,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -8124,6 +8360,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -8132,7 +8372,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -8202,6 +8450,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -8210,7 +8462,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -8296,6 +8556,10 @@
           "named": true
         },
         {
+          "type": "if_expression",
+          "named": true
+        },
+        {
           "type": "impl_function_type",
           "named": true
         },
@@ -8304,7 +8568,15 @@
           "named": true
         },
         {
+          "type": "index_expression",
+          "named": true
+        },
+        {
           "type": "interface_expression",
+          "named": true
+        },
+        {
+          "type": "match_expression",
           "named": true
         },
         {
@@ -9190,6 +9462,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -9198,7 +9474,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -10074,6 +10358,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -10082,7 +10370,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -10363,6 +10659,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -10371,7 +10671,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -10626,6 +10934,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -10634,7 +10946,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {
@@ -11263,6 +11583,10 @@
             "named": true
           },
           {
+            "type": "if_expression",
+            "named": true
+          },
+          {
             "type": "impl_function_type",
             "named": true
           },
@@ -11271,7 +11595,15 @@
             "named": true
           },
           {
+            "type": "index_expression",
+            "named": true
+          },
+          {
             "type": "interface_expression",
+            "named": true
+          },
+          {
+            "type": "match_expression",
             "named": true
           },
           {

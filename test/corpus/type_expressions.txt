@@ -1,0 +1,86 @@
+================================================================================
+if and match computing parameter and return types
+================================================================================
+
+const widen = fn(x: if (W) i64 else i32): if (W) i64 else i32 { return x; };
+const pick = fn(k: K, x: match (k) { .a => u8, .b => u32 }): void {};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    (identifier)
+    (function_expression
+      (parameter
+        (identifier)
+        (if_expression
+          (identifier)
+          (primitive_type)
+          (primitive_type)))
+      (if_expression
+        (identifier)
+        (primitive_type)
+        (primitive_type))
+      (block
+        (return_statement
+          (identifier)))))
+  (decl_statement
+    (identifier)
+    (function_expression
+      (parameter
+        (identifier)
+        (identifier))
+      (parameter
+        (identifier)
+        (match_expression
+          (identifier)
+          (match_arm
+            (implicit_access_expression
+              (identifier))
+            (identifier))
+          (match_arm
+            (implicit_access_expression
+              (identifier))
+            (identifier))))
+      (primitive_type)
+      (block))))
+
+================================================================================
+index and nested type expressions in declarations
+================================================================================
+
+let b: TYPES[0] = 300;
+let c: if (W) T else u8 = T{ .a = 4 };
+let d: [2]if (W) i64 else i32 = .{ 1, 2 };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    (identifier)
+    (index_expression
+      (identifier)
+      (integer_literal))
+    (integer_literal))
+  (decl_statement
+    (identifier)
+    (if_expression
+      (identifier)
+      (identifier)
+      (primitive_type))
+    (initializer_expression
+      (identifier)
+      (field_initializer
+        (identifier)
+        (integer_literal))))
+  (decl_statement
+    (identifier)
+    (array_type
+      (integer_literal)
+      (if_expression
+        (identifier)
+        (primitive_type)
+        (primitive_type)))
+    (initializer_expression
+      (integer_literal)
+      (integer_literal))))
