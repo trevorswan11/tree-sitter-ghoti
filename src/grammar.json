@@ -4991,19 +4991,41 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "PREC_DYNAMIC",
-                      "value": 1,
-                      "content": {
-                        "type": "FIELD",
-                        "name": "pack",
-                        "content": {
-                          "type": "STRING",
-                          "value": "..."
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "PREC_DYNAMIC",
+                          "value": 1,
+                          "content": {
+                            "type": "FIELD",
+                            "name": "pack",
+                            "content": {
+                              "type": "STRING",
+                              "value": "..."
+                            }
+                          }
+                        },
+                        {
+                          "type": "BLANK"
                         }
-                      }
+                      ]
                     },
                     {
-                      "type": "BLANK"
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "="
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "default",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_expression"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }

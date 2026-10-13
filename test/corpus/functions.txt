@@ -243,3 +243,37 @@ const pick = fn(): i32 { return if comptime (n > 1) n else 0; };
               right: (integer_literal))
             consequence: (identifier)
             alternate: (integer_literal)))))))
+
+==================
+default parameter values
+==================
+
+const f = fn(a: i32, b: i32 = a * 2, comptime T: type = i32): i32 {
+    return a + b;
+};
+
+---
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (function_expression
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        type: (primitive_type)
+        default: (binary_expression
+          left: (identifier)
+          right: (integer_literal)))
+      (parameter
+        name: (identifier)
+        type: (primitive_type)
+        default: (identifier))
+      return_type: (primitive_type)
+      body: (block
+        (return_statement
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))))))

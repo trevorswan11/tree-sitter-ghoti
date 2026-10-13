@@ -804,13 +804,21 @@ module.exports = grammar({
     self_parameter: ($) =>
       seq(optional(choice("&", "^", seq("&", "mut", optional("?")), seq("^", "mut", optional("?")))), choice("self", "this")),
 
-    // `x: T`, an untyped pack `rest...`, a bound pack `rest: impl I...`, or `comptime n: T`.
+    // `x: T`, an untyped pack `rest...`, a bound pack `rest: impl I...`, `comptime n: T`, or a
+    // defaulted `x: T = value`.
     parameter: ($) =>
       seq(
         optional("comptime"),
         field("name", $.identifier),
         choice(
-          seq(":", field("type", $._type), optional(prec.dynamic(1, field("pack", "...")))),
+          seq(
+            ":",
+            field("type", $._type),
+            choice(
+              optional(prec.dynamic(1, field("pack", "..."))),
+              seq("=", field("default", $._expression)),
+            ),
+          ),
           field("pack", "..."),
         ),
       ),
