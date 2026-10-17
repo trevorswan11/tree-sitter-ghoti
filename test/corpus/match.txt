@@ -2,7 +2,7 @@
 Tagged union and match expressions
 ==================
 
-const U = union { a: i32, b: i32 };
+const U = union(enum) { a: i32, b: i32 };
 pub const main = fn(): i32 {
     let mut u = U{ .b = 7 };
     return match (u) { .a => 1, .b => 2, };
@@ -20,6 +20,7 @@ match (u) {
   (decl_statement
     name: (identifier)
     value: (union_expression
+      tag: (inferred_tag)
       (field_declaration
         name: (identifier)
         type: (primitive_type))
@@ -73,3 +74,62 @@ match (u) {
       (match_arm
         pattern: (underscore)
         body: (block)))))
+
+==================
+Union tag forms
+==================
+
+const A = union(enum) { a: i32 };
+const B = union(Kind) { a: i32 };
+const C = union(void) { all: u64, halves: [2]u32 };
+const D = extern union { a: i32 };
+const E = extern packed union { a: u8 };
+const F = packed struct { a: u8 };
+
+---
+
+(source_file
+  (decl_statement
+    (identifier)
+    (union_expression
+      (inferred_tag)
+      (field_declaration
+        (identifier)
+        (primitive_type))))
+  (decl_statement
+    (identifier)
+    (union_expression
+      (identifier)
+      (field_declaration
+        (identifier)
+        (primitive_type))))
+  (decl_statement
+    (identifier)
+    (union_expression
+      (primitive_type)
+      (field_declaration
+        (identifier)
+        (primitive_type))
+      (field_declaration
+        (identifier)
+        (array_type
+          (integer_literal)
+          (primitive_type)))))
+  (decl_statement
+    (identifier)
+    (union_expression
+      (field_declaration
+        (identifier)
+        (primitive_type))))
+  (decl_statement
+    (identifier)
+    (union_expression
+      (field_declaration
+        (identifier)
+        (primitive_type))))
+  (decl_statement
+    (identifier)
+    (struct_expression
+      (field_declaration
+        (identifier)
+        (primitive_type)))))

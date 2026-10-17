@@ -34,7 +34,7 @@ module.exports = grammar({
     [$.expression_statement, $._expression, $._if_branch],
     [$.expression_statement, $._if_branch],
     [$.initializer_expression, $._if_branch],
-    [$.extern_modifier, $.struct_expression],
+    [$.extern_modifier, $.struct_expression, $.union_expression],
     [$._expression, $.labeled_expression],
     [$.labeled_statement, $._expression, $.labeled_expression],
     [$._expression, $.expression_statement],
@@ -898,10 +898,18 @@ module.exports = grammar({
         "}",
       ),
 
-    struct_expression: ($) =>
-      seq(repeat(choice("extern", "packed")), "struct", $._struct_body),
+    _aggregate_modifiers: ($) => repeat1(choice("extern", "packed")),
 
-    union_expression: ($) => seq(optional("extern"), "union", $._struct_body),
+    struct_expression: ($) => seq(optional($._aggregate_modifiers), "struct", $._struct_body),
+
+    // `union(enum)` / `union(MyEnum)` / `union(void)` name the tag; `extern` and `packed` have none
+    union_expression: ($) =>
+      seq(
+        optional($._aggregate_modifiers),
+        "union",
+        optional(seq("(", field("tag", choice(alias("enum", $.inferred_tag), $._type)), ")")),
+        $._struct_body,
+      ),
 
     enumerator: ($) => seq(field("name", $.identifier), optional(seq("=", field("value", $._expression)))),
 

@@ -5682,24 +5682,36 @@
         }
       ]
     },
+    "_aggregate_modifiers": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "extern"
+          },
+          {
+            "type": "STRING",
+            "value": "packed"
+          }
+        ]
+      }
+    },
     "struct_expression": {
       "type": "SEQ",
       "members": [
         {
-          "type": "REPEAT",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "extern"
-              },
-              {
-                "type": "STRING",
-                "value": "packed"
-              }
-            ]
-          }
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_aggregate_modifiers"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -5718,8 +5730,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "extern"
+              "type": "SYMBOL",
+              "name": "_aggregate_modifiers"
             },
             {
               "type": "BLANK"
@@ -5729,6 +5741,49 @@
         {
           "type": "STRING",
           "value": "union"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "("
+                },
+                {
+                  "type": "FIELD",
+                  "name": "tag",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "STRING",
+                          "value": "enum"
+                        },
+                        "named": true,
+                        "value": "inferred_tag"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_type"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": ")"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
@@ -8119,7 +8174,8 @@
     ],
     [
       "extern_modifier",
-      "struct_expression"
+      "struct_expression",
+      "union_expression"
     ],
     [
       "_expression",

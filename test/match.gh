@@ -1,4 +1,4 @@
-const U = union { a: i32, b: i32 };
+const U = union(enum) { a: i32, b: i32 };
 pub const main = fn(): i32 {
     let mut u = U{ .b = 7 };
     return match (u) { .a => 1, .b => 2, };

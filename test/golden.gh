@@ -25,7 +25,7 @@ enum : u64 {A = 1ul, B = T, C, };
 const T = i32;
 a(&mut r, t, ^[N:0]u8);
 .a;
-union { a: i32, b: &mut T, };
+union(enum) { a: i32, b: &mut T, };
 do { a;} while (true);
 1i64; 2z; 3u32; 'a'; 2.3f32; 2.3;
 [1uz]A{a};
@@ -37,7 +37,7 @@ defer 3;
 .{.a = 3};
 TT{.adfasf = a};
 .{};
-union { a: struct { b: Foo = bar, pub c: i32, let mut d: u32; }, const b = fn(&self, a: A): C { c; }; };
+union(enum) { a: struct { b: Foo = bar, pub c: i32, let mut d: u32; }, const b = fn(&self, a: A): C { c; }; };
 enum : i64 { A = 2i64, const b = fn(&self, a: A): C { c; }; };
 const a = {};
 test "dump" { import other; std.testing.expect(a == true); }

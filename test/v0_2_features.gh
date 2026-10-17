@@ -31,7 +31,7 @@ const Status = enum {
     const from_code = fn(c: i32): i32 { seen += 1; return c; };
 };
 
-const Slot = union {
+const Slot = union(enum) {
     empty: void,
     used: i32,
 
