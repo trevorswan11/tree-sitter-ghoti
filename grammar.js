@@ -467,7 +467,7 @@ module.exports = grammar({
         prec(PREC.UNARY, seq("comptime", field("operand", $._expression))),
       ),
 
-    // `@cfgValue(pred)` or `@cfgValue(pred => val, ..., _ => fallback)`. `@cfgValue` lexes as its
+    // `@cfgValue(pred)` or `@cfgValue(pred, ... => val, ..., _ => fallback)`. `@cfgValue` lexes as its
     // own token, so the plain form has to be spelled out here too
     cfg_value_call: ($) =>
       seq(
@@ -478,9 +478,13 @@ module.exports = grammar({
         ")",
       ),
 
+    // Taken when any predicate holds; a trailing comma before `=>` keeps one predicate per line
     cfg_guard_arm: ($) =>
       seq(
-        field("predicate", choice($._expression, "_")),
+        choice(
+          field("predicate", "_"),
+          seq(field("predicate", sepBy1(",", $._expression)), optional(",")),
+        ),
         "=>",
         field("value", $._expression),
       ),

@@ -3096,9 +3096,13 @@
     "named": true,
     "fields": {
       "predicate": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": ",",
+            "named": false
+          },
           {
             "type": "_",
             "named": false

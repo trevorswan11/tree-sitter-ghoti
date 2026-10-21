@@ -34,6 +34,41 @@ const width = @cfgValue(ptr_bits == 64 => 8, _ => 4);
         value: (integer_literal)))))
 
 ================================================================================
+@cfgValue guard arms with several predicates and a nested @cfgValue
+================================================================================
+
+const abi = @cfgValue(arch == .wasm32, arch == .arm => false, arch == .x86, => true, _ => @cfgValue(_ => 1));
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (decl_statement
+    name: (identifier)
+    value: (cfg_value_call
+      function: (builtin_identifier)
+      (cfg_guard_arm
+        predicate: (binary_expression
+          left: (identifier)
+          right: (implicit_access_expression
+            member: (identifier)))
+        predicate: (binary_expression
+          left: (identifier)
+          right: (implicit_access_expression
+            member: (identifier)))
+        value: (boolean_literal))
+      (cfg_guard_arm
+        predicate: (binary_expression
+          left: (identifier)
+          right: (implicit_access_expression
+            member: (identifier)))
+        value: (boolean_literal))
+      (cfg_guard_arm
+        value: (cfg_value_call
+          function: (builtin_identifier)
+          (cfg_guard_arm
+            value: (integer_literal)))))))
+
+================================================================================
 Comparing against a slice type
 ================================================================================
 
