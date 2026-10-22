@@ -1151,8 +1151,8 @@ module.exports = grammar({
     for_expression: ($) =>
       prec.right(
         seq(
+          optional("unroll"),
           "for",
-          optional("comptime"),
           "(",
           sepBy(",", $._expression),
           optional(","),
@@ -1166,8 +1166,8 @@ module.exports = grammar({
     while_expression: ($) =>
       prec.right(
         seq(
+          optional("unroll"),
           "while",
-          optional("comptime"),
           "(",
           field("condition", $._expression),
           ")",
@@ -1186,16 +1186,16 @@ module.exports = grammar({
 
     do_while_expression: ($) =>
       seq(
+        optional("unroll"),
         "do",
         field("body", $.block),
         "while",
-        optional("comptime"),
         "(",
         field("condition", $._expression),
         ")",
       ),
 
-    loop_expression: ($) => seq("loop", optional("comptime"), field("body", $.block)),
+    loop_expression: ($) => seq(optional("unroll"), "loop", field("body", $.block)),
   },
 });
 

@@ -60,11 +60,11 @@ comptime parameters, headers, and loops
 
 const f = fn(comptime n: usize, rest...): void {
     if comptime (n > 4) {}
-    for comptime (rest) |r| {}
-    while comptime (n < 2) {}
+    unroll for (rest) |r| {}
+    unroll while (n < 2) {}
     match comptime (n) { _ => {} }
-    loop comptime { break; }
-    do {} while comptime (false);
+    unroll loop { break; }
+    unroll do {} while (false);
 };
 impl(comptime N: usize) Box(N) {}
 

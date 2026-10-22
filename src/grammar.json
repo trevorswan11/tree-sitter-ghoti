@@ -7738,20 +7738,20 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "for"
-          },
-          {
             "type": "CHOICE",
             "members": [
               {
                 "type": "STRING",
-                "value": "comptime"
+                "value": "unroll"
               },
               {
                 "type": "BLANK"
               }
             ]
+          },
+          {
+            "type": "STRING",
+            "value": "for"
           },
           {
             "type": "STRING",
@@ -7915,20 +7915,20 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "while"
-          },
-          {
             "type": "CHOICE",
             "members": [
               {
                 "type": "STRING",
-                "value": "comptime"
+                "value": "unroll"
               },
               {
                 "type": "BLANK"
               }
             ]
+          },
+          {
+            "type": "STRING",
+            "value": "while"
           },
           {
             "type": "STRING",
@@ -8073,6 +8073,18 @@
       "type": "SEQ",
       "members": [
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "unroll"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "STRING",
           "value": "do"
         },
@@ -8087,18 +8099,6 @@
         {
           "type": "STRING",
           "value": "while"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "comptime"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
         },
         {
           "type": "STRING",
@@ -8122,20 +8122,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "loop"
-        },
-        {
           "type": "CHOICE",
           "members": [
             {
               "type": "STRING",
-              "value": "comptime"
+              "value": "unroll"
             },
             {
               "type": "BLANK"
             }
           ]
+        },
+        {
+          "type": "STRING",
+          "value": "loop"
         },
         {
           "type": "FIELD",

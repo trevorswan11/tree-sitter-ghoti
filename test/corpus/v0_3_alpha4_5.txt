@@ -114,14 +114,14 @@ comptime let mut other: i32 = 0;
     value: (integer_literal)))
 
 ==================
-for comptime and while comptime
+unroll for and unroll while
 ==================
 
-const unroll = fn(): void {
-    for comptime (0..4) |i| {
+const unrolled = fn(): void {
+    unroll for (0..4) |i| {
         let x = i;
     }
-    while comptime (true) {
+    unroll while (true) {
         break;
     }
 };

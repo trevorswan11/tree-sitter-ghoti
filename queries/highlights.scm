@@ -118,6 +118,7 @@
   "loop"
   "for"
   "while"
+  "unroll"
   "continue"
   "break"
   "import"

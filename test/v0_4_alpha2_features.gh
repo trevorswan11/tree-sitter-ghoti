@@ -41,9 +41,9 @@ const twice = fn(v: i32): i32 { return v * 2; };
 
 const scale = fn(comptime k: i32, x: i32): i32 {
     comptime let mut acc: i32 = 0;
-    for comptime (0..4) |i| { acc += i; }
+    unroll for (0..4) |i| { acc += i; }
     let base = comptime twice(21) + x;
     comptime check();
-    loop comptime { break; }
+    unroll loop { break; }
     return base * k + acc;
 };
