@@ -133,3 +133,84 @@ const F = packed struct { a: u8 };
       (field_declaration
         (identifier)
         (primitive_type)))))
+
+================================================================================
+Nested patterns and guards
+================================================================================
+
+const f = match (n) {
+    .ok(.some(|raw|)) => raw,
+    .{ .x = 0, .y = |y| } => y,
+    .{ |a|, _, |&mut b| } if a > 0 => a,
+    Point{ .x = 1..=5 } => 1,
+    .ok(.{ .len = 1.. } |s|) => s,
+    _ => 0,
+};
+
+---
+
+(source_file
+  (decl_statement
+    (identifier)
+    (match_expression
+      (identifier)
+      (match_arm
+        (variant_pattern
+          (implicit_access_expression
+            (identifier))
+          (variant_pattern
+            (implicit_access_expression
+              (identifier))
+            (capture_pattern
+              (capture
+                (identifier)))))
+        (identifier))
+      (match_arm
+        (aggregate_pattern
+          (field_pattern
+            (identifier)
+            (integer_literal))
+          (field_pattern
+            (identifier)
+            (capture_pattern
+              (capture
+                (identifier)))))
+        (identifier))
+      (match_arm
+        (aggregate_pattern
+          (capture_pattern
+            (capture
+              (identifier)))
+          (underscore)
+          (capture_pattern
+            (capture
+              (identifier))))
+        (binary_expression
+          (identifier)
+          (integer_literal))
+        (identifier))
+      (match_arm
+        (aggregate_pattern
+          (identifier)
+          (field_pattern
+            (identifier)
+            (range_expression
+              (integer_literal)
+              (integer_literal))))
+        (integer_literal))
+      (match_arm
+        (variant_pattern
+          (implicit_access_expression
+            (identifier))
+          (bound_pattern
+            (aggregate_pattern
+              (field_pattern
+                (identifier)
+                (range_expression
+                  (integer_literal))))
+            (capture
+              (identifier))))
+        (identifier))
+      (match_arm
+        (underscore)
+        (integer_literal)))))

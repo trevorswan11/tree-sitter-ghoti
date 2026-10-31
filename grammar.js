@@ -23,6 +23,11 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   conflicts: ($) => [
+    [$._expression, $._pattern],
+    [$.initializer_expression, $.aggregate_pattern],
+    [$._expression, $.bound_pattern],
+    [$._expression, $.variant_pattern],
+    [$._expression, $.aggregate_pattern],
     [$.impl_statement, $.impl_type],
     [$._named_type, $.impl_function_type, $._expression],
     [$._named_type, $.array_expression],
@@ -1091,6 +1096,50 @@ module.exports = grammar({
         $.reference_expression,
         $.address_of_expression,
         $.range_expression,
+        $.variant_pattern,
+        $.aggregate_pattern,
+        $.capture_pattern,
+        $.bound_pattern,
+      ),
+
+    // `.ok(.some(|v|))`, `Shape.circle(|r|)`
+    variant_pattern: ($) =>
+      prec.dynamic(
+        1,
+        seq(
+          field("variant", choice($.implicit_access_expression, $.dot_expression, $.identifier)),
+          "(",
+          field("payload", $._pattern),
+          optional(","),
+          ")",
+        ),
+      ),
+
+    // `.{ .x = 0, .y = |y| }`, `.{ |a|, _ }`, `Point{ .x = |x| }`
+    aggregate_pattern: ($) =>
+      prec.dynamic(
+        1,
+        seq(
+          choice(".", field("type", choice($.identifier, $.dot_expression))),
+          "{",
+          sepBy(",", choice($.field_pattern, $._pattern)),
+          optional(","),
+          "}",
+        ),
+      ),
+
+    field_pattern: ($) =>
+      prec(PREC.FIELD + 1, seq(".", field("name", $._member_name), "=", field("value", $._pattern))),
+
+    capture_pattern: ($) => seq("|", $.capture, "|"),
+
+    // `.{ .len = 1.. } |raw|`: refine, then bind the whole value
+    bound_pattern: ($) =>
+      seq(
+        field("pattern", choice($.variant_pattern, $.aggregate_pattern, $.range_expression, $.integer_literal)),
+        "|",
+        $.capture,
+        "|",
       ),
 
     match_arm: ($) =>
@@ -1098,6 +1147,7 @@ module.exports = grammar({
         field("pattern", sepBy1(",", $._pattern)),
         // A trailing comma before `=>` keeps one pattern per line (`.a, .b, => x`)
         optional(","),
+        optional(seq("if", field("guard", $._expression))),
         "=>",
         optional(
           seq(
