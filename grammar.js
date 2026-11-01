@@ -23,6 +23,8 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   conflicts: ($) => [
+    [$._expression, $.capture],
+    [$.decl_statement, $._expression],
     [$._expression, $._pattern],
     [$.initializer_expression, $.aggregate_pattern],
     [$._expression, $.bound_pattern],
@@ -148,9 +150,11 @@ module.exports = grammar({
         repeat($._decl_modifier),
         // `comptime let mut` is the one compile-time-mutable form, and only a local
         field("kind", choice("const", "let", seq("let", "mut"), seq("comptime", "let", "mut"))),
-        field("name", $.identifier),
+        field("name", choice($.identifier, $.variant_pattern, $.aggregate_pattern)),
         optional(seq(":", field("type", $._type))),
         optional(seq("=", field("value", $._value))),
+        // `let .ok(|v|) = r else { return; };`
+        optional(seq("else", field("alternate", $._if_branch))),
         ";",
       ),
 
@@ -1196,7 +1200,12 @@ module.exports = grammar({
       ),
 
     capture: ($) =>
-      seq(optional(choice("&", "^", seq("&", "mut", optional("?")), seq("^", "mut", optional("?")))), choice($.identifier, "_")),
+      choice(
+        seq(optional(choice("&", "^", seq("&", "mut", optional("?")), seq("^", "mut", optional("?")))), choice($.identifier, "_")),
+        // `for (points) |.{ .x = |x| }| { ... }`
+        $.variant_pattern,
+        $.aggregate_pattern,
+      ),
 
     for_expression: ($) =>
       prec.right(

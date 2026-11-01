@@ -214,3 +214,122 @@ const f = match (n) {
       (match_arm
         (underscore)
         (integer_literal)))))
+
+================================================================================
+Destructuring declarations and captures
+================================================================================
+
+const f = fn(): void {
+    let .{ .x = |x|, .y = |y| } = p;
+    let mut .{ |a|, _ } = t;
+    let .ok(|v|) = r else { return; };
+    let Point{ .x = |n| }: Point = p;
+    for (ps) |.{ .x = |x| }| { use(x); }
+    if (o) |.{ .x = |x| }| { use(x); } else |.{ .c = |c| }| { use(c); }
+};
+pub const .{ .major = |major| } = version;
+
+---
+
+(source_file
+  (decl_statement
+    (identifier)
+    (function_expression
+      (primitive_type)
+      (block
+        (decl_statement
+          (aggregate_pattern
+            (field_pattern
+              (identifier)
+              (capture_pattern
+                (capture
+                  (identifier))))
+            (field_pattern
+              (identifier)
+              (capture_pattern
+                (capture
+                  (identifier)))))
+          (identifier))
+        (decl_statement
+          (aggregate_pattern
+            (capture_pattern
+              (capture
+                (identifier)))
+            (underscore))
+          (identifier))
+        (decl_statement
+          (variant_pattern
+            (implicit_access_expression
+              (identifier))
+            (capture_pattern
+              (capture
+                (identifier))))
+          (identifier)
+          (expression_statement
+            (block
+              (return_statement))))
+        (decl_statement
+          (aggregate_pattern
+            (identifier)
+            (field_pattern
+              (identifier)
+              (capture_pattern
+                (capture
+                  (identifier)))))
+          (identifier)
+          (identifier))
+        (expression_statement
+          (for_expression
+            (identifier)
+            (capture
+              (aggregate_pattern
+                (field_pattern
+                  (identifier)
+                  (capture_pattern
+                    (capture
+                      (identifier))))))
+            (block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)))))))
+        (expression_statement
+          (if_expression
+            (identifier)
+            (capture
+              (aggregate_pattern
+                (field_pattern
+                  (identifier)
+                  (capture_pattern
+                    (capture
+                      (identifier))))))
+            (expression_statement
+              (block
+                (expression_statement
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier))))))
+            (capture
+              (aggregate_pattern
+                (field_pattern
+                  (identifier)
+                  (capture_pattern
+                    (capture
+                      (identifier))))))
+            (expression_statement
+              (block
+                (expression_statement
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)))))))))))
+  (decl_statement
+    (aggregate_pattern
+      (field_pattern
+        (identifier)
+        (capture_pattern
+          (capture
+            (identifier)))))
+    (identifier)))
